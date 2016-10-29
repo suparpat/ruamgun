@@ -8,7 +8,7 @@ Uses: **<a href="https://github.com/criso/fbgraph">fbgraph</a>,
 
 
 ## How it works
-The program will fetch and store data from Facebook Pages that has been added to db/pages (using the addPages script) every set interval. The UI is under construction.
+The program will fetch and store posts from Facebook Pages that has been added to db/pages (using the addPages script) every set interval. Duplicate posts will not be inserted. The UI is under construction.
 
 ## Running
 `npm install`
