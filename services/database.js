@@ -1,11 +1,12 @@
 var Datastore = require('nedb');
 var db = {};
-
+var pages = [];
 
 function start(){
 	db.pages = new Datastore({ filename: 'db/pages', autoload: true });
 
 	db.pages.find({}, function(err, docs){
+		pages = docs;
 		for(var i = 0; i < docs.length; i++){
 			var pageName = docs[i].name;
 			if(pageName){
@@ -28,8 +29,14 @@ function find(dbName, expression, cb){
 	})
 }
 
+function getPages(){
+	return pages;
+}
+
+
 module.exports = {
 	start: start,
 	insert: insert,
-	find: find
+	find: find,
+	getPages: getPages
 }

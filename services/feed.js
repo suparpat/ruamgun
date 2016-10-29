@@ -28,28 +28,32 @@ function start(){
 // 	"created_time": c,
 // 	"id": id
 // }
+//https://developers.facebook.com/tools/explorer
+//https://developers.facebook.com/tools/accesstoken/
 
 function fetch(){
 	try{
 		database.find("pages", {}, function(pages){
 
+			//Get each page's posts
 			pages.forEach(function(page){
 				get(page.name, function(feedData){
 					if(feedData.data){
-						feedData.data.forEach(function(item){
-							database.find(page.name, {"id": item.id}, function(duplicate){
-								if(duplicate.length == 0){
-									console.log('[feed] inserting ' + item.id)
-									database.insert(page.name, {
-										message: item.message,
-										created_time: item.created_time,
-										id: item.id
-									})									
-								}else{
-									// console.log("[feed] duplicate " + item.id)
-								}
-							})					
-						})
+
+				//Check each post for duplicate. If no duplicate, insert to db
+				feedData.data.forEach(function(item){
+					database.find(page.name, {"id": item.id}, function(duplicate){
+						if(duplicate.length == 0){
+							console.log('[feed] inserting ' + item.id, page.name, item.message?(item.message).substring(0, 120):"");
+							var temp_item = createItem(item);
+							database.insert(page.name, temp_item);
+						}else{
+							// console.log("[feed] duplicate " + item.id)
+						}
+					})					
+				})
+
+
 					}
 				})	
 			})
@@ -62,6 +66,29 @@ function fetch(){
 
 }
 
+function createItem(d){
+	var t = {};
+	t.message = d.message;
+	t.create_time = d.create_time;
+	t.id = d.id;
+	if(d.attachments){
+		var attachment = d.attachments.data[0];
+		// if(attachment){
+			t.attachment = {};
+			t.attachment.type = attachment.type;
+			t.attachment.title = attachment.title;
+			t.attachment.url = attachment.url;
+			if(attachment.media){
+				t.attachment.img_url = attachment.media.image.src;			
+			}
+		// }		
+	}
+
+
+
+	return t;
+}
+
 function get(pageId, cb){
 	// console.log('[feed] getting feed data from ' + pageId)
 	var options = {
@@ -70,9 +97,12 @@ function get(pageId, cb){
 	  , headers:  { connection:  "keep-alive" }
 	};
 
+	var fields = ["message", "created_time", "id", "attachments"]
+
+	var fieldsQuery = "fields=" + fields.join(",");
 	graph
 	  .setOptions(options)
-	  .get(pageId + "/feed", function(err, res) {
+	  .get(pageId + "/feed?" + fieldsQuery, function(err, res) {
 	  	if(err){
 	  		console.log(err)
 	  		cb([]);
