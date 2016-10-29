@@ -1,0 +1,7 @@
+{
+	"facebook":{
+		"app_id": "123456",
+		"app_secret": "your_app_secret",
+		"app_token": "your_token"
+	}
+}
