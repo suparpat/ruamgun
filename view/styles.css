@@ -5,3 +5,8 @@ table, th, td {
 th, td {
 	padding: 5px;
 }
+
+p {
+	font-family: arial;
+	font-style: italic;
+}

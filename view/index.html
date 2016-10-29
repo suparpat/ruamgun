@@ -21,18 +21,18 @@
 			<!-- <button v-on:click="get">Get</button> -->
 			<table style="width:100%; ">
 				<tr v-for="row in output">
-					<td v-for="data in row">
+					<td v-for="data in row" style="text-align: center; vertical-align: top">
 						<p>{{data.created_time}}</p>
 						<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
 						<div v-if="!isVideo(getDataType(data))">
 							<div>
 								<a v-if="data.attachment" target="_blank" v-bind:href="formatUrl(data.attachment.url, getDataType(data))">
-									<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
+									<img v-bind:src="data.attachment.img_url" style="width:50%; height:auto;">
 								</a>
 							</div>
 
 							<div>
-								<p style="text-align:center;">{{data.message}}</p>
+								<p>{{truncate(data.message)}}</p>
 							</div>
 						</div>
 						<div v-if="isVideo(getDataType(data))">

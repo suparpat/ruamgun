@@ -61,6 +61,13 @@ var app = new Vue({
 			}else{
 				return false;
 			}
+		},
+		truncate: function(text){
+			if(text.length>100){
+				return text.substring(0, 150) + "...";
+			}else{
+				return text;
+			}
 		}
 	}
 })

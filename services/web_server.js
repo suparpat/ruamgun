@@ -15,7 +15,7 @@ function start(){
 
 
 app.get('/api/feed', function(req, res){
-	database.find('Reuters', {}, function(data){
+	database.find('thematterco', {}, function(data){
 		res.send(data);
 	})
 })
