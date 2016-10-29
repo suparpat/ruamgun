@@ -22,6 +22,7 @@
 			<table style="width:100%; ">
 				<tr v-for="row in output">
 					<td v-for="data in row">
+						<p>{{data.created_time}}</p>
 						<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
 						<div v-if="!isVideo(getDataType(data))">
 							<div>

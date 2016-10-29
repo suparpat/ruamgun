@@ -69,7 +69,7 @@ function fetch(){
 function createItem(d){
 	var t = {};
 	t.message = d.message;
-	t.create_time = d.create_time;
+	t.created_time = d.created_time;
 	t.id = d.id;
 	if(d.attachments){
 		var attachment = d.attachments.data[0];
