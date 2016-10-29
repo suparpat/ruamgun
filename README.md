@@ -6,6 +6,10 @@ Uses: **<a href="https://github.com/criso/fbgraph">fbgraph</a>,
 <a href="https://github.com/louischatriot/nedb">NeDB</a>, 
 <a href="https://github.com/expressjs/express">Express.js</a>**
 
+
+## How it works
+The program will fetch and store data from Facebook Pages that has been added to db/pages (using the addPages script) every set interval. The UI is under construction.
+
 ## Running
 `npm install`
 
