@@ -2,7 +2,7 @@
 // https://github.com/vuejs/awesome-vue
 // https://github.com/sorrycc/awesome-javascript
 
-const store = new Vuex.Store({
+var store = new Vuex.Store({
   state: {
 	title: 'รวมกัน',
 	feed: [],
@@ -30,7 +30,7 @@ const store = new Vuex.Store({
   }
 })
 
-const index = {
+var index = {
 	data: function(){
 		return {
 	// 		title: 'รวมกัน',
@@ -118,23 +118,20 @@ const index = {
 			this.getFeed();
 		},
 		getFeed: function(){
-			this.$http.get('/api/feed/' + this.selectedPage).then((response) => {
+			this.$http.get('/api/feed/' + this.selectedPage).then(function(response) {
 				store.commit('setFeed', response.body);
-				store.state.feed.forEach((f) => {
+				store.state.feed.forEach(function(f) {
 					if(f.attachment && this.isVideo(f.attachment.type)){
 						f.attachment.url = 'fbvid.html?url='+f.attachment.url
 					}
-					// if(f.message){
-					// 	f.message = f.message.replace(/(?:\r\n|\r|\n)/g, '<br />');
-					// }
-				})
+				}, this)
 				store.commit('setOutput', this.chop(store.state.feed));
-			}, (response) => {
+			}, function(response) {
 				//error
 			})
 		},
 		getPages: function(){
-			this.$http.get('/api/pages').then((pages) => {
+			this.$http.get('/api/pages').then(function(pages) {
 				store.commit('setPages', pages.body);
 			}, (response) => {
 				//error
@@ -174,7 +171,7 @@ const index = {
 	}
 }
 
-const item = {
+var item = {
 	template: `
 	<div>
 	    <div v-if="modalData.attachment">
@@ -232,18 +229,18 @@ const item = {
 	}
 }
 
-const routes = [
+var routes = [
   { path: '/', component: index },
   { path: '/:id', component: item }
 ]
 
-const router = new VueRouter({
+var router = new VueRouter({
   routes // short for routes: routes
 })
 
 // const app = new Vue({
 //   router
 // }).$mount('#app')
-const app = new Vue({
+var app = new Vue({
 	router
 }).$mount('#app')
