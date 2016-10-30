@@ -36,6 +36,9 @@ var app = new Vue({
 					if(f.created_time){
 						f.created_time = this.formatDate(f.created_time);
 					}
+					if(f.attachment && this.isVideo(f.attachment.type)){
+						f.attachment.url = 'fbvid.html?url='+f.attachment.url
+					}
 					// if(f.message){
 					// 	f.message = f.message.replace(/(?:\r\n|\r|\n)/g, '<br />');
 					// }
@@ -69,6 +72,13 @@ var app = new Vue({
 				return text.substring(0, 150) + "...";
 			}else{
 				return text;
+			}
+		},
+		isVideo: function(type){
+			if(type.toLowerCase().indexOf('video') > -1){
+				return true;
+			}else{
+				return false;
 			}
 		},
 		triggerModal: function(data){

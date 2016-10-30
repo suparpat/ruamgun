@@ -37,11 +37,6 @@ Vue.component('modal', {
 
 		    <div slot="header" style="text-align:center;">
 			    <div v-if="modalData.attachment">
-					<!-- <div v-if="isVideo(getDataType(modalData))">
-						<my-fb-vid :url="modalData.attachment.url"></my-fb-vid>
-					</div> -->
-
-					<!-- <div v-if="!isVideo(getDataType(modalData))"> -->
 					<div>
 						<a target="_blank" v-bind:href="formatUrl(modalData.attachment.url, getDataType(modalData))">
 							<img v-bind:src="modalData.attachment.img_url" style="width:auto; height:auto;">
@@ -56,7 +51,7 @@ Vue.component('modal', {
 
 		    </div>
 		    <div slot="footer">
-				{{modalData.created_time}}
+				<a target="_blank" v-bind:href="formatUrl(modalData.attachment.url, getDataType(modalData))">{{modalData.created_time}}</a>
 				<button class="modal-default-button" @click="$emit('close')">OK</button>
 		    </div>
         </div>
