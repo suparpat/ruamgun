@@ -33,9 +33,6 @@ var app = new Vue({
 			this.$http.get('/api/feed/' + this.selectedPage).then((response) => {
 				this.feed = response.body;
 				this.feed.forEach((f) => {
-					if(f.created_time){
-						f.created_time = this.formatDate(f.created_time);
-					}
 					if(f.attachment && this.isVideo(f.attachment.type)){
 						f.attachment.url = 'fbvid.html?url='+f.attachment.url
 					}
@@ -84,41 +81,6 @@ var app = new Vue({
 		triggerModal: function(data){
 			this.modalData = data;
 			this.showModal = true;
-		},
-		formatDate: function(date){
-			var date = new Date(date);
-			var minute = date.getMinutes();
-			var day;
-			switch(date.getDay()){
-				case 0:
-					day = "Sun";
-					break;
-				case 1:
-					day = "Mon";
-					break;
-				case 2:
-					day = "Tues";
-					break;
-				case 3:
-					day = "Wed";
-					break;
-				case 4:
-					day = "Thurs";
-					break;
-				case 5:
-					day = "Fri";
-					break;
-				case 6:
-					day = "Sat";
-					break;
-			}
-			var formattedDate = day + ", " +
-								date.getDate() + "/" + 
-								(date.getMonth()+1) + "/" + 
-								date.getFullYear() + 
-								", " + date.getHours() + ":" + 
-								(String(minute)[1] ? minute : "0" + minute);
-			return formattedDate;
 		}
 	}
 })

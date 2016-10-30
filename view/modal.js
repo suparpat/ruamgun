@@ -51,7 +51,13 @@ Vue.component('modal', {
 
 		    </div>
 		    <div slot="footer">
-				<a target="_blank" v-bind:href="formatUrl(modalData.attachment.url, getDataType(modalData))">{{modalData.created_time}}</a>
+				<a 
+				v-if="modalData.attachment" 
+				target="_blank" 
+				v-bind:href="formatUrl(modalData.attachment.url, getDataType(modalData))">
+					{{modalData.created_time}}
+				</a>
+				<p v-if="!modalData.attachment">{{modalData.created_time}}</p>
 				<button class="modal-default-button" @click="$emit('close')">OK</button>
 		    </div>
         </div>
