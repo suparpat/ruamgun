@@ -7,53 +7,27 @@
 	</head>
 
 	<body>
-		
 		<div id="app">
-			<h1>{{title}}</h1>
-			<select v-model="columns">
-				<option v-for="n in maxCols">{{n}}</option>
-			</select>
-			<select v-model="selectedPage">
-				<option v-for="p in pages">{{p.name}}</option>
-			</select>
-
-			<modal v-if="showModal" :modal-data="modalData" @close="showModal = false"></modal>
-
-			<table style="width:100%; table-layout: fixed; word-break: break-word;">
-				<tr v-for="row in output">
-					<td v-for="data in row" style="text-align: center; vertical-align: top">
-						<div @click="triggerModal(data)" style="cursor:hand;">
-							<p>{{data.created_time}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></p>
-							<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
-							<div v-if="data.attachment">
-								<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
-								<p>{{truncate(data.message)}}</p>
-							</div>
-							<div v-if="!data.attachment">
-								<h2>{{truncate(data.message)}}</h2>
-							</div>
-						</div>
-
-
-					</td>
-				</tr>
-			</table>
+			<router-view></router-view>
 		</div>
 
 		  <!-- Load Facebook SDK for JavaScript -->
-		  <div id="fb-root"></div>
+		  <!-- <div id="fb-root"></div>
 		  <script>(function(d, s, id) {
 		    var js, fjs = d.getElementsByTagName(s)[0];
 		    if (d.getElementById(id)) return;
 		    js = d.createElement(s); js.id = id;
 		    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
 		    fjs.parentNode.insertBefore(js, fjs);
-		  }(document, 'script', 'facebook-jssdk'));</script>
+		  }(document, 'script', 'facebook-jssdk'));</script> -->
 
 		<script src="js/vue.js"></script>
+		<script src="js/vuex.js"></script>
 		<script src="js/vue-resource.js"></script>
-		<script src="modal.js"></script>
+		<script src="js/vue-router.js"></script>
 		<script src="app.js"></script>
+
+
 
 
 	</body>

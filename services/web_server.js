@@ -6,6 +6,8 @@ app.use('/', express.static('view'));
 app.use('/db', express.static('db'));
 app.use('/js', express.static('node_modules/vue/dist'));
 app.use('/js', express.static('node_modules/vue-resource/dist'));
+app.use('/js', express.static('node_modules/vue-router/dist'));
+app.use('/js', express.static('node_modules/vuex/dist'));
 
 function start(port){
 	app.listen(port, function(){

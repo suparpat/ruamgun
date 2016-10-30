@@ -1,7 +1,8 @@
 var Datastore = require('nedb');
 var graph = require('fbgraph');
 var database = require('./database');
-
+var helpers = require('./helpers');
+var running = 0;
 
 function setup(app_id, app_secret, app_token){
 	var my_access_token = app_id + "|" + app_secret;
@@ -9,15 +10,22 @@ function setup(app_id, app_secret, app_token){
 	graph.setAccessToken(my_access_token);
 };
 
-function start(cronSchedule){
-	//http://crontab.guru/
+function start(cronSchedule, daysSince){
 
+
+	//http://crontab.guru/
 	var CronJob = require('cron').CronJob;
 	var tz = "Asia/Bangkok";
+
 	new CronJob(cronSchedule, function() {
-	  console.log("[feed] " + new Date() + ": getting feed data");
-	  fetch();
+		if(running==0){
+			console.log("[feed] " + new Date() + ": getting feed data");
+			fetch(daysSince);
+		}else{
+			console.log("[feed] ALREADY RUNNING!!")
+		}
 	}, null, true, tz);
+
 
 }
 
@@ -31,20 +39,21 @@ function start(cronSchedule){
 //https://developers.facebook.com/tools/explorer
 //https://developers.facebook.com/tools/accesstoken/
 
-function fetch(){
+function fetch(daysSince){
 	try{
 		database.find("pages", {}, function(pages){
 
 			//Get each page's posts
 			pages.forEach(function(page){
-				get(page.name, function(feedData){
-					if(feedData.data){
+				running++;
+				getPage(page.name, daysSince, function(feedData){
+					if(feedData){
 
 				//Check each post for duplicate. If no duplicate, insert to db
-				feedData.data.forEach(function(item){
+				feedData.forEach(function(item){
 					database.find(page.name, {"id": item.id}, function(duplicate){
 						if(duplicate.length == 0){
-							console.log('[feed] inserting ' + item.id, page.name, item.message?(item.message).substring(0, 120):"");
+							console.log('[feed] inserting to ' + page.name, item.message?(item.message).substring(0, 120):"");
 							var temp_item = createItem(item);
 							database.insert(page.name, temp_item);
 						}else{
@@ -52,9 +61,12 @@ function fetch(){
 						}
 					})					
 				})
+					running--
 
-
+					}else{
+						running--;
 					}
+
 				})	
 			})
 
@@ -69,7 +81,7 @@ function fetch(){
 function createItem(d){
 	var t = {};
 	t.message = d.message;
-	t.created_time = d.created_time;
+	t.created_time = new Date(d.created_time);
 	t.id = d.id;
 	if(d.attachments){
 		var attachment = d.attachments.data[0];
@@ -84,34 +96,100 @@ function createItem(d){
 		// }		
 	}
 
-
-
 	return t;
 }
 
-function get(pageId, cb){
+function getPage(pageId, daysSince, callback){
 	// console.log('[feed] getting feed data from ' + pageId)
-	var options = {
+	var params = {};
+	params.pageId = pageId;
+	params.options = {
 	    timeout:  5000
 	  , pool:     { maxSockets:  Infinity }
 	  , headers:  { connection:  "keep-alive" }
 	};
 
-	var fields = ["message", "created_time", "id", "attachments"]
+	params.since = helpers.unixTimeSince(daysSince);
+	params.limit = 100;
+	params.fields = ["message", "created_time", "id", "attachments"]
 
-	var fieldsQuery = "fields=" + fields.join(",");
-	graph
-	  .setOptions(options)
-	  .get(pageId + "/feed?" + fieldsQuery, function(err, res) {
-	  	if(err){
-	  		console.log(err)
-	  		cb([]);
-	  	}else{
-		    cb(res);	  		
-	  	}
-	  });
+
+	get(params, 1, [], function(res){
+		callback(res);
+	})
+
+	// graph
+	//   .setOptions(options)
+	//   .get(pageId + "/feed?" + query, function(err, res) {
+	//   	if(err){
+	//   		console.log(err)
+	//   		cb([]);
+	//   	}else{
+	// 		if(res.paging && res.paging.next) {
+	// 			graph.get(res.paging.next, function(err, res) {
+	// 			// page 2
+	// 			});
+	// 		}
+	// 	    cb(res);	  		
+	//   	}
+	//   });
 
 }
+
+function get(params, pageCount, output, cb){
+	console.log(running)
+	var pageId = params.pageId;
+	var options = params.options;
+
+	var fields = params.fields;
+	var since = params.since;
+	var limit = params.limit;
+
+	var url = params.url;
+
+	if(pageCount == 1){
+		var query = "fields=" + fields.join(",") + "&since=" + since + "&limit=" + limit;
+		var firstCallUrl = pageId + "/feed?" + query;
+		console.log("[feed] firstCall for " + pageId, firstCallUrl);
+
+		graph.setOptions(options)
+			  .get(firstCallUrl, function(err, res) {
+			  	if(err){
+			  		console.log(err);
+			  		cb(output);
+			  	}else{
+			  		iterate(res)
+			  	}
+		  });		
+		}else{
+			graph.setOptions(options)
+				  .get(url, function(err, res) {
+				  	if(err){
+				  		console.log(err);
+				  		cb(output);
+				  	}else{
+				  		iterate(res)
+				  	}
+				  });	
+		}
+
+		function iterate(res){
+	  		output = output.concat(res.data);
+			if(res.paging && res.paging.next) {
+				pageCount = pageCount + 1;
+				console.log('[feed] pagination call for ' + pageId, pageCount);
+				get({
+					pageId: pageId,
+					options: options,
+					url: res.paging.next
+				}, pageCount, output, cb);
+			}else{
+				cb(output);
+			}
+		}
+
+}
+
 
 
 module.exports = {

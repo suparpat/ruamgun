@@ -12,7 +12,9 @@ p {
 }
 
 
-
+a {
+  text-decoration: none;
+}
 
 /*modal*/
 
@@ -46,7 +48,7 @@ p {
   font-family: Helvetica, Arial, sans-serif;
   overflow: scroll;
   /*https://css-tricks.com/forums/topic/max-height-as-percentage-issues/*/
-  max-height: 95vh;
+  max-height: 90vh;
 }
 
 .modal-header h3 {

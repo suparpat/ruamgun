@@ -12,6 +12,6 @@ feed.setup(
 	config.facebook.app_secret,
 	config.facebook.app_token);
 
-feed.start(config.cron.production);
+feed.start(config.cron.development, config.feeds.days_since);
 
 webServer.start(3000);

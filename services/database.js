@@ -1,3 +1,4 @@
+// https://github.com/louischatriot/nedb/wiki
 var Datastore = require('nedb');
 var db = {};
 var pages = [];
@@ -24,7 +25,8 @@ function insert(dbName, data){
 }
 
 function find(dbName, expression, cb){
-	db[dbName].find(expression, function(err, docs){
+
+	db[dbName].find(expression).sort({ created_time: -1}).limit(50).exec(function(err, docs){
 		cb(docs);
 	})
 }
