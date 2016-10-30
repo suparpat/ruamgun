@@ -11,7 +11,10 @@ var app = new Vue({
 		columns: 5,
 		output: [],
 		pages: [],
-		selectedPage: "Reuters"
+		selectedPage: "Reuters",
+		maxCols: 12,
+		showModal: false,
+		modalData: {}
 	},
 	watch:{
 		'columns': function(){
@@ -29,6 +32,14 @@ var app = new Vue({
 		getFeed: function(){
 			this.$http.get('/api/feed/' + this.selectedPage).then((response) => {
 				this.feed = response.body;
+				this.feed.forEach((f) => {
+					if(f.created_time){
+						f.created_time = this.formatDate(f.created_time);
+					}
+					// if(f.message){
+					// 	f.message = f.message.replace(/(?:\r\n|\r|\n)/g, '<br />');
+					// }
+				})
 				this.output = this.chop(this.feed);
 			}, (response) => {
 				//error
@@ -53,37 +64,51 @@ var app = new Vue({
 
 			return output;
 		},
-		formatUrl: function(fb_url, type){
-			if(type.toLowerCase()=="share"){
-				var url = decodeURIComponent(fb_url);
-				url = url.substring(url.indexOf("=") + 1);
-				url = url.substring(0, url.indexOf("&"));
-				return url;
-			}
-
-			return fb_url;
-		},
-		getDataType: function(data){
-			if(data.attachment){
-				return data.attachment.type;
-			}
-			else{
-				return "text";
-			}
-		},
-		isVideo: function(type){
-			if(type.toLowerCase().indexOf('video') > -1){
-				return true;
-			}else{
-				return false;
-			}
-		},
 		truncate: function(text){
-			if(text.length>100){
+			if(text && text.length > 100){
 				return text.substring(0, 150) + "...";
 			}else{
 				return text;
 			}
+		},
+		triggerModal: function(data){
+			this.modalData = data;
+			this.showModal = true;
+		},
+		formatDate: function(date){
+			var date = new Date(date);
+			var minute = date.getMinutes();
+			var day;
+			switch(date.getDay()){
+				case 0:
+					day = "Sun";
+					break;
+				case 1:
+					day = "Mon";
+					break;
+				case 2:
+					day = "Tues";
+					break;
+				case 3:
+					day = "Wed";
+					break;
+				case 4:
+					day = "Thurs";
+					break;
+				case 5:
+					day = "Fri";
+					break;
+				case 6:
+					day = "Sat";
+					break;
+			}
+			var formattedDate = day + ", " +
+								date.getDate() + "/" + 
+								(date.getMonth()+1) + "/" + 
+								date.getFullYear() + 
+								", " + date.getHours() + ":" + 
+								(String(minute)[1] ? minute : "0" + minute);
+			return formattedDate;
 		}
 	}
 })

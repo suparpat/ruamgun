@@ -11,48 +11,33 @@
 		<div id="app">
 			<h1>{{title}}</h1>
 			<select v-model="columns">
-				<option>1</option>
-				<option>2</option>
-				<option>3</option>
-				<option>4</option>
-				<option>5</option>
-				<option>6</option>
+				<option v-for="n in maxCols">{{n}}</option>
 			</select>
 			<select v-model="selectedPage">
 				<option v-for="p in pages">{{p.name}}</option>
 			</select>
-			<!-- <button v-on:click="get">Get</button> -->
-			<table style="width:100%; ">
+
+			<modal v-if="showModal" :modal-data="modalData" @close="showModal = false"></modal>
+
+			<table style="width:100%; table-layout: fixed; word-break: break-word;">
 				<tr v-for="row in output">
 					<td v-for="data in row" style="text-align: center; vertical-align: top">
-						<p>{{data.created_time}}</p>
-						<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
-						<div v-if="!isVideo(getDataType(data))">
-							<div>
-								<a v-if="data.attachment" target="_blank" v-bind:href="formatUrl(data.attachment.url, getDataType(data))">
-									<img v-bind:src="data.attachment.img_url" style="width:50%; height:auto;">
-								</a>
-							</div>
-
-							<div>
+						<div @click="triggerModal(data)" style="cursor:hand;">
+							<p>{{data.created_time}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></p>
+							<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
+							<div v-if="data.attachment">
+								<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
 								<p>{{truncate(data.message)}}</p>
 							</div>
+							<div v-if="!data.attachment">
+								<h2>{{truncate(data.message)}}</h2>
+							</div>
 						</div>
-						<div v-if="isVideo(getDataType(data))">
-							<!-- https://developers.facebook.com/docs/plugins/embedded-video-player -->
-							<!-- Your embedded video player code -->
-							  <div class="fb-video" v-bind:data-href="data.attachment.url" data-show-text="true" data-allowfullscreen="true"></div>
-							<p>{{truncate(data.message)}}</p>
-						</div>
+
+
 					</td>
 				</tr>
 			</table>
-			<!-- <ol>
-				<li v-for="f in feed">
-					<img v-bind:src="f.attachment.img_url" style="height: 200px">
-					<p>{{f.message}}</p>
-				</li>
-			</ol> -->
 		</div>
 
 		  <!-- Load Facebook SDK for JavaScript -->
@@ -67,6 +52,10 @@
 
 		<script src="js/vue.js"></script>
 		<script src="js/vue-resource.js"></script>
+		<script src="fbvideo.js"></script>
+		<script src="modal.js"></script>
 		<script src="app.js"></script>
+
+
 	</body>
 </html>
