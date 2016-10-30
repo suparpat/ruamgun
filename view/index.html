@@ -18,6 +18,9 @@
 				<option>5</option>
 				<option>6</option>
 			</select>
+			<select v-model="selectedPage">
+				<option v-for="p in pages">{{p.name}}</option>
+			</select>
 			<!-- <button v-on:click="get">Get</button> -->
 			<table style="width:100%; ">
 				<tr v-for="row in output">
@@ -39,6 +42,7 @@
 							<!-- https://developers.facebook.com/docs/plugins/embedded-video-player -->
 							<!-- Your embedded video player code -->
 							  <div class="fb-video" v-bind:data-href="data.attachment.url" data-show-text="true" data-allowfullscreen="true"></div>
+							<p>{{truncate(data.message)}}</p>
 						</div>
 					</td>
 				</tr>

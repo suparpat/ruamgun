@@ -9,12 +9,12 @@ function setup(app_id, app_secret, app_token){
 	graph.setAccessToken(my_access_token);
 };
 
-function start(){
+function start(cronSchedule){
 	//http://crontab.guru/
 
 	var CronJob = require('cron').CronJob;
 	var tz = "Asia/Bangkok";
-	new CronJob('*/10 * * * * *', function() {
+	new CronJob(cronSchedule, function() {
 	  console.log("[feed] " + new Date() + ": getting feed data");
 	  fetch();
 	}, null, true, tz);

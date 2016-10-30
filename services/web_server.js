@@ -7,17 +7,27 @@ app.use('/db', express.static('db'));
 app.use('/js', express.static('node_modules/vue/dist'));
 app.use('/js', express.static('node_modules/vue-resource/dist'));
 
-function start(){
-	app.listen(80, function(){
-		console.log("[web] listening on port 80");
+function start(port){
+	app.listen(port, function(){
+		console.log("[web] listening on port " + port);
 	});	
 }
 
 
-app.get('/api/feed', function(req, res){
-	database.find('thematterco', {}, function(data){
-		res.send(data);
-	})
+app.get('/api/feed/:page', function(req, res){
+	var page = req.params.page
+	if(page){
+		database.find(page, {}, function(data){
+			res.send(data);
+		})
+	}else{
+		res.end("Please specify page")
+	}
+
+})
+
+app.get('/api/pages', function(req, res){
+	res.json(database.getPages());
 })
 
 module.exports = {

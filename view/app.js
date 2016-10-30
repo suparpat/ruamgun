@@ -9,18 +9,34 @@ var app = new Vue({
 		title: 'รวมกัน',
 		feed: [],
 		columns: 5,
-		output: []
+		output: [],
+		pages: [],
+		selectedPage: "Reuters"
 	},
 	watch:{
 		'columns': function(){
 			this.output = this.chop(this.feed)
+		},
+		'selectedPage': function(){
+			this.getFeed();
 		}
 	},
 	methods: {
-		get: function(){
-			this.$http.get('/api/feed').then((response) => {
+		init: function(){
+			this.getPages();
+			this.getFeed();
+		},
+		getFeed: function(){
+			this.$http.get('/api/feed/' + this.selectedPage).then((response) => {
 				this.feed = response.body;
 				this.output = this.chop(this.feed);
+			}, (response) => {
+				//error
+			})
+		},
+		getPages: function(){
+			this.$http.get('/api/pages').then((pages) => {
+				this.pages = pages.body;
 			}, (response) => {
 				//error
 			})
@@ -72,4 +88,4 @@ var app = new Vue({
 	}
 })
 
-app.get();
+app.init();
