@@ -10,26 +10,30 @@
 
 	<body>
 		<div id="app">
+			<h1>รวมกัน</h1>
+
+			<div style="margin: 10px 0px 10px 0px">
+			    <router-link to="/combined">รวม</router-link>
+			    <router-link to="/page">หน้าต่อหน้า</router-link>
+			    <router-link to="/sources">sources</router-link>
+			</div>
+
 			<router-view></router-view>
 		</div>
 
-		  <!-- Load Facebook SDK for JavaScript -->
-		  <!-- <div id="fb-root"></div>
-		  <script>(function(d, s, id) {
-		    var js, fjs = d.getElementsByTagName(s)[0];
-		    if (d.getElementById(id)) return;
-		    js = d.createElement(s); js.id = id;
-		    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
-		    fjs.parentNode.insertBefore(js, fjs);
-		  }(document, 'script', 'facebook-jssdk'));</script> -->
 
 		<script type="text/javascript" src="js/vue.js"></script>
 		<script type="text/javascript" src="js/vuex.js"></script>
 		<script type="text/javascript" src="js/vue-resource.js"></script>
 		<script type="text/javascript" src="js/vue-router.js"></script>
+		<script type="text/javascript" src="mixins.js"></script>
+		<script type="text/javascript" src="store.js"></script>
+		<script type="text/javascript" src="table.js"></script>
+		<script type="text/javascript" src="sourcePage.js"></script>
+		<script type="text/javascript" src="separatePages.js"></script>
+		<script type="text/javascript" src="combined.js"></script>
+		<script type="text/javascript" src="itemPage.js"></script>
 		<script type="text/javascript" src="app.js"></script>
-
-
 
 
 	</body>

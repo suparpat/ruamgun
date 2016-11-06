@@ -1,0 +1,70 @@
+Vue.component('my-table', {
+	template: `
+		<table style="width:100%; table-layout: fixed; word-break: break-word;">
+			<tr v-for="row in output">
+				<td v-for="data in row" style="text-align: center; vertical-align: top">
+				<span style="display: inherit; padding-bottom: 4px">
+					<img style="height: 40px; float:left; margin-right: 5px;" :src="getImage(data.pageName)">
+					<h4 style="margin:0px; float: left;">{{data.pageName}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></h4>
+					<h4 style="margin:0px; float:left;">{{data.created_time}}</h4>
+				</span>
+				<div style="clear: both;"></div>
+					<div @click="triggerModal(data)">
+						<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
+						<div v-if="data.attachment">
+							<router-link @click="triggerModal(data)" :to="{path: 'item', query: {id: data.id}}">
+								<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
+							</router-link>
+							<p>{{truncate(data.message)}}</p>
+						</div>
+						<div v-if="!data.attachment">
+							<router-link @click="triggerModal(data)" :to="{path: 'item', query: {id: data.id}}">
+								<h2>{{truncate(data.message)}}</h2>
+							</router-link>
+						</div>
+					</div>
+					<span>
+						likes: {{data.likes}}
+						shares: {{data.shares}}
+						comments: {{data.comments.count}}
+					</span>
+					
+				</td>
+			</tr>
+		</table>
+	`,
+	// data: function(){
+		// return {
+		// 	output: store.state.output
+		// }
+	// },
+	props: ['output'],
+	// watch: 'store.state.pages': function(){
+
+	// },
+	methods: {
+		truncate: function(text){
+			if(text && text.length > 500){
+				return text.substring(0, 500) + "...";
+			}else{
+				return text;
+			}
+		},
+		triggerModal: function(data){
+			store.commit("setModalData", data);
+			// this.modalData = data;
+			this.showModal = true;
+		},
+		getImage: function(pageName){
+			if(store.state.pages.length > 0){
+				var page = store.state.pages.find(function(element){
+					return element.name == pageName;
+				});
+				return page.picture;				
+			}else{
+				return null;
+			}
+
+		}
+	}
+})

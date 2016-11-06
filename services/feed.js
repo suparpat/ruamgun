@@ -12,23 +12,47 @@ function setup(app_id, app_secret, app_token){
 
 function start(cronSchedule, daysSince){
 
+	getPageInfo();
+	run();
 
 	//http://crontab.guru/
 	var CronJob = require('cron').CronJob;
 	var tz = "Asia/Bangkok";
 
-	new CronJob(cronSchedule, function() {
-		if(running==0){
+	new CronJob(cronSchedule, run, null, true, tz);
+
+	function run() {
+		if(running == 0){
 			console.log("[feed] " + new Date() + ": getting feed data");
 			fetch(daysSince);
 		}else{
 			console.log("[feed] ALREADY RUNNING!!")
 		}
-	}, null, true, tz);
-
+	}
 
 }
 
+
+function getPageInfo(){
+	var fields = ["about", "picture"];
+	var fieldsQuery = "fields=" + fields.join(",");
+	database.find("pages", {}, 'created_time', function(pages){
+		pages.forEach(function(page){
+			console.log("[feed] Getting page info for page: " + page.name)
+			graph.get(page.name + "?" + fieldsQuery, function(err, res){
+				// console.log(res);
+				database.update("pages", {name: page.name},
+				 {$set: {
+				 	about: res.about,
+				 	picture: res.picture.data.url
+				 }}, function(numReplaced){
+					// console.log(numReplaced)
+				})
+			})
+		})
+	})
+
+}
 
 // Item JSON format:
 // {
@@ -41,7 +65,7 @@ function start(cronSchedule, daysSince){
 
 function fetch(daysSince){
 	try{
-		database.find("pages", {}, function(pages){
+		database.find("pages", {}, 'created_time', function(pages){
 
 			//Get each page's posts
 			pages.forEach(function(page){
@@ -51,10 +75,10 @@ function fetch(daysSince){
 
 				//Check each post for duplicate. If no duplicate, insert to db
 				feedData.forEach(function(item){
-					database.find(page.name, {"id": item.id}, function(duplicate){
+					database.find(page.name, {"id": item.id}, 'created_time', function(duplicate){
 						if(duplicate.length == 0){
 							console.log('[feed] inserting to ' + page.name, item.message?(item.message).substring(0, 120):"");
-							var temp_item = createItem(item);
+							var temp_item = createItem(item, page.name);
 							database.insert(page.name, temp_item);
 						}else{
 							// console.log("[feed] duplicate " + item.id)
@@ -78,11 +102,23 @@ function fetch(daysSince){
 
 }
 
-function createItem(d){
+function createItem(d, pageName){
 	var t = {};
+	t.pageName = pageName;
 	t.message = d.message;
 	t.created_time = new Date(d.created_time);
 	t.id = d.id;
+	
+	t.likes = d.likes.summary.total_count;
+	t.comments = {};
+	t.comments.count = d.comments.summary.total_count;
+	t.comments.data = d.comments.data;
+	// console.log(d)
+
+	if(d.shares){
+		t.shares = d.shares.count;		
+	}
+
 	if(d.attachments){
 		var attachment = d.attachments.data[0];
 		// if(attachment){
@@ -111,10 +147,19 @@ function getPage(pageId, daysSince, callback){
 
 	params.since = helpers.unixTimeSince(daysSince);
 	params.limit = 100;
-	params.fields = ["message", "created_time", "id", "attachments"]
+	params.fields = [
+			"message",
+			"created_time",
+			"id",
+			"attachments",
+			"likes.limit(0).summary(true)",
+			"comments.limit(5).summary(true){like_count,message}",
+			"shares"
+	 ]
 
 
 	get(params, 1, [], function(res){
+		console.log("Done querying page " + pageId);
 		callback(res);
 	})
 
@@ -137,7 +182,7 @@ function getPage(pageId, daysSince, callback){
 }
 
 function get(params, pageCount, output, cb){
-	console.log(running)
+	// console.log(running)
 	var pageId = params.pageId;
 	var options = params.options;
 
@@ -150,7 +195,7 @@ function get(params, pageCount, output, cb){
 	if(pageCount == 1){
 		var query = "fields=" + fields.join(",") + "&since=" + since + "&limit=" + limit;
 		var firstCallUrl = pageId + "/feed?" + query;
-		console.log("[feed] firstCall for " + pageId, firstCallUrl);
+		console.log("[feed] Querying page " + pageId);
 
 		graph.setOptions(options)
 			  .get(firstCallUrl, function(err, res) {
@@ -158,7 +203,7 @@ function get(params, pageCount, output, cb){
 			  		console.log(err);
 			  		cb(output);
 			  	}else{
-			  		iterate(res)
+			  		iterate(res);
 			  	}
 		  });		
 		}else{
@@ -168,7 +213,7 @@ function get(params, pageCount, output, cb){
 				  		console.log(err);
 				  		cb(output);
 				  	}else{
-				  		iterate(res)
+				  		iterate(res);
 				  	}
 				  });	
 		}
@@ -177,7 +222,7 @@ function get(params, pageCount, output, cb){
 	  		output = output.concat(res.data);
 			if(res.paging && res.paging.next) {
 				pageCount = pageCount + 1;
-				console.log('[feed] pagination call for ' + pageId, pageCount);
+				// console.log('[feed] pagination call for ' + pageId, pageCount);
 				get({
 					pageId: pageId,
 					options: options,

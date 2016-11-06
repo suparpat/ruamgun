@@ -16,10 +16,10 @@ function start(port){
 }
 
 
-app.get('/api/feed/:page', function(req, res){
+app.get('/api/page/:page', function(req, res){
 	var page = req.params.page
 	if(page){
-		database.find(page, {}, function(data){
+		database.find(page, {}, req.query.sort, function(data){
 			res.send(data);
 		})
 	}else{
@@ -28,9 +28,29 @@ app.get('/api/feed/:page', function(req, res){
 
 })
 
+
+app.get('/api/cat/:cat', function(req, res){
+	var cat = req.params.cat;
+	if(cat){
+		database.find(cat, {}, req.query.sort, function(data){
+			res.send(data);
+		})
+	}else{
+		res.end("Please specify category")
+	}
+
+})
+
+
 app.get('/api/pages', function(req, res){
 	res.json(database.getPages());
-})
+});
+
+
+app.get('/api/cats', function(req, res){
+	res.json(database.getCats());
+});
+
 
 module.exports = {
 	start: start
