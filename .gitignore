@@ -85,3 +85,4 @@ $RECYCLE.BIN/
 *.lnk
 db/fb_pages/
 services/config.json
+db/combined/
