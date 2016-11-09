@@ -82,7 +82,9 @@ var separatePages = {
 			store.commit("updateSelectedSortBy", e.target.value);
 		},
 		init: function(){
-			this.getPages();
+			if(store.state.pages.length == 0){
+				this.getPages();
+			}
 			this.getFeed();
 		},
 		getFeed: function(){

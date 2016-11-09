@@ -65,6 +65,9 @@ var combined = {
 			store.commit('setCatFeed', []);
 			store.commit("setCatOutput", []);
 			this.getFeed();			
+		},
+		'pages': function(){
+			this.setOutput();
 		}
 	},
 	methods: {
@@ -78,23 +81,43 @@ var combined = {
 			store.commit("updateSelectedSortBy", e.target.value);
 		},
 		init: function(){
-			this.getCats();
+			if(store.state.categories.length == 0){
+				this.getCats();
+			}
+			if(store.state.pages.length == 0){
+				this.getPages();
+			}
 			this.getFeed();
+		},
+		getImage: function(pageName){
+			if(store.state.pages.length > 0){
+				var page = store.state.pages.find(function(element){
+					return element.name == pageName;
+				});
+				return page.picture;				
+			}else{
+				return null;
+			}
+
 		},
 		getFeed: function(){
 			this.$http.get('/api/cat/' + store.state.selectedCat, {params: {sort: store.state.selectedSortBy}})
 			.then(function(response) {
 				store.commit('setCatFeed', response.body);
-				store.state.catFeed.forEach(function(f) {
-					if(f.attachment && this.isVideo(f.attachment.type)){
-						f.attachment.url = 'fbvid.html?url='+f.attachment.url
-					}
-				}, this)
-				store.commit('setCatOutput', this.chop(store.state.catFeed));
+				this.setOutput();
 			}, function(response) {
 				//error
 			})
 		},
+		setOutput: function(){
+			store.state.catFeed.forEach(function(f) {
+				if(f.attachment && this.isVideo(f.attachment.type)){
+					f.attachment.url = 'fbvid.html?url='+f.attachment.url
+				}
+				f.image_logo = this.getImage(f.pageName);
+			}, this);
+			store.commit('setCatOutput', this.chop(store.state.catFeed));
+		}
 		// getSelectedPageInfo(){
 		// 	var p = store.state.pages.find(function(element){
 		// 		return element.name == store.state.selectedPage

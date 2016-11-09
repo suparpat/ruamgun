@@ -73,7 +73,7 @@ function find(dbName, expression, sort, cb){
 	.sort(sortExp)
 	.limit(50)
 	.exec(function(err, docs){
-		cb(docs);
+		cb(docs, err);
 	})
 }
 

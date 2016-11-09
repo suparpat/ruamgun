@@ -1,24 +1,28 @@
+
+// routing example
+// https://jsfiddle.net/pauloc/31p8gpzy/8/
+
 Vue.component('my-table', {
 	template: `
 		<table style="width:100%; table-layout: fixed; word-break: break-word;">
 			<tr v-for="row in output">
 				<td v-for="data in row" style="text-align: center; vertical-align: top">
-				<span style="display: inherit; padding-bottom: 4px">
-					<img style="height: 40px; float:left; margin-right: 5px;" :src="getImage(data.pageName)">
-					<h4 style="margin:0px; float: left;">{{data.pageName}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></h4>
-					<h4 style="margin:0px; float:left;">{{data.created_time}}</h4>
-				</span>
-				<div style="clear: both;"></div>
+					<span style="display: block; padding-bottom: 4px">
+						<img style="height: 40px; float:left; margin-right: 5px;" :src="data.image_logo">
+						<h4 style="margin:0px; float: left;">{{data.pageName}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></h4>
+						<br><p style="margin:0px; float:left;">{{data.created_time | moment}}</p>
+					</span>
+					<div style="clear: both;"></div>
 					<div @click="triggerModal(data)">
 						<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
 						<div v-if="data.attachment">
-							<router-link @click="triggerModal(data)" :to="{path: 'item', query: {id: data.id}}">
+							<router-link @click="triggerModal(data)" :to="{path: 'item/'+data.id, params: {id: data.id}}">
 								<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
 							</router-link>
 							<p>{{truncate(data.message)}}</p>
 						</div>
 						<div v-if="!data.attachment">
-							<router-link @click="triggerModal(data)" :to="{path: 'item', query: {id: data.id}}">
+							<router-link @click="triggerModal(data)" :to="{path: 'item/'+data.id, params: {id: data.id}}">
 								<h2>{{truncate(data.message)}}</h2>
 							</router-link>
 						</div>
@@ -65,6 +69,15 @@ Vue.component('my-table', {
 				return null;
 			}
 
+		},
+		moment: function(){
+			return moment();
+		}
+	},
+	filters: {
+		moment: function (date) {
+			// return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+			return moment(date).fromNow();
 		}
 	}
 })

@@ -1,5 +1,7 @@
 var express = require('express');
+var history = require('connect-history-api-fallback');
 var app = express();
+app.use(history());
 var database = require('./database');
 
 app.use('/', express.static('view'));
@@ -8,6 +10,7 @@ app.use('/js', express.static('node_modules/vue/dist'));
 app.use('/js', express.static('node_modules/vue-resource/dist'));
 app.use('/js', express.static('node_modules/vue-router/dist'));
 app.use('/js', express.static('node_modules/vuex/dist'));
+app.use('/js', express.static('node_modules/moment'));
 
 function start(port){
 	app.listen(port, function(){
@@ -31,6 +34,7 @@ app.get('/api/page/:page', function(req, res){
 
 app.get('/api/cat/:cat', function(req, res){
 	var cat = req.params.cat;
+	console.log(cat, req.query.sort)
 	if(cat){
 		database.find(cat, {}, req.query.sort, function(data){
 			res.send(data);

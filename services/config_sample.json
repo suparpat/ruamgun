@@ -1,7 +1,17 @@
 {
+	"env": "development",
 	"facebook":{
 		"app_id": "123456",
 		"app_secret": "your_app_secret",
 		"app_token": "your_token"
+	}
+	"cron":{
+		"development": "*/30 * * * * *",
+		"production": "*/5 * * * *"
+	},
+	"feeds":{
+		"mode": "latest",
+		"latest": 300,
+		"days_since": 3
 	}
 }
