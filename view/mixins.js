@@ -1,4 +1,17 @@
 var myMixin = {
+	created: function(){
+		if( /Tablet|iPad/i.test(navigator.userAgent) ) {
+		 	store.commit('updateColumns', 3);
+		}
+		else if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+		 	store.commit('updateColumns', 1);
+		}
+		else{
+			store.commit('updateColumns', 4);
+		}
+		store.commit("setCatOutput", this.chop(store.state.catFeed))
+
+	},
 	methods:{
 		getCats: function(){
 			this.$http.get('/api/cats').then(function(pages) {
