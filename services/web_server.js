@@ -34,7 +34,7 @@ app.get('/api/page/:page', function(req, res){
 
 app.get('/api/cat/:cat', function(req, res){
 	var cat = req.params.cat;
-	console.log(cat, req.query.sort)
+	// console.log(cat, req.query.sort)
 	if(cat){
 		database.find(cat, {}, req.query.sort, function(data){
 			res.send(data);
@@ -55,6 +55,11 @@ app.get('/api/cats', function(req, res){
 	res.json(database.getCats());
 });
 
+app.get('/api/:page/:id', function(req, res){
+	database.find(req.params.page, {'id': req.params.id}, 'created_time', function(data){
+		res.json(data);
+	})
+})
 
 module.exports = {
 	start: start

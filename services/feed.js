@@ -48,7 +48,10 @@ function getPageInfo(){
 	var fields = ["about", "picture"];
 	var fieldsQuery = "fields=" + fields.join(",");
 	database.find("pages", {}, 'created_time', function(pages, err){
-		pages.forEach(function(page){
+		var pageLength = pages.length;
+		recurse(0, pageLength)
+		function recurse(currentPage, pageLength){
+			var page = pages[currentPage];
 			console.log("[feed] Getting page info for page: " + page.name)
 			graph.setOptions(options).get(page.name + "?" + fieldsQuery, function(err, res){
 				if(!err){
@@ -64,8 +67,31 @@ function getPageInfo(){
 					console.log('[feed] ERROR: ' + JSON.stringify(err));
 				}
 
-			})
-		})
+				currentPage = currentPage + 1;
+				if(currentPage < pageLength){
+					recurse(currentPage, pageLength);
+				}
+
+			})		
+		}
+		// pages.forEach(function(page){
+		// 	console.log("[feed] Getting page info for page: " + page.name)
+		// 	graph.setOptions(options).get(page.name + "?" + fieldsQuery, function(err, res){
+		// 		if(!err){
+		// 			// console.log(res);
+		// 			database.update("pages", {name: page.name},
+		// 			 {$set: {
+		// 			 	about: res.about,
+		// 			 	picture: res.picture.data.url
+		// 			 }}, function(numReplaced){
+		// 				// console.log(numReplaced)
+		// 			})		
+		// 		}else{
+		// 			console.log('[feed] ERROR: ' + JSON.stringify(err));
+		// 		}
+
+		// 	})
+		// })
 	})
 
 }

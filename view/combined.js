@@ -7,7 +7,7 @@ var combined = {
 	},
 	template: `
 		<div>
-			<div style="margin: 10px 0px 10px 0px">
+			<div style="margin: 10px 0px 10px 0px; text-align:center;">
 				<select :value="columns" @input="updateColumns">
 					<option v-for="n in maxCols">{{n}}</option>
 				</select>
@@ -51,36 +51,49 @@ var combined = {
 			this.init();
 		}
 	},
+	mounted:  function(){
+		this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
+	},
 	watch:{
-		'columns': function(){
-			store.commit("setCatOutput", this.chop(store.state.catFeed))
-		},
-		'selectedCat': function(){
-			store.commit('setCatFeed', []);
-			store.commit("setCatOutput", []);
-			this.getFeed();
-			// this.getSelectedPageInfo()
-		},
-		'selectedSortBy': function(){
-			store.commit('setCatFeed', []);
-			store.commit("setCatOutput", []);
-			this.getFeed();			
-		},
 		'pages': function(){
 			this.setOutput();
 		}
 	},
 	methods: {
 		updateSelectedCat: function(e){
-			store.commit("updateSelectedCat", e.target.value)
+			store.commit("updateSelectedCat", e.target.value);
+			store.commit('setCatFeed', []);
+			store.commit("setCatOutput", []);
+			this.getFeed();
 		},
 		updateColumns: function(e){
+			this.updateRoute('combined', store.state.selectedCat, e.target.value, store.state.selectedSortBy)
 			store.commit("updateColumns", e.target.value)
+			store.commit("setCatOutput", this.chop(store.state.catFeed))
 		},
 		updateSelectedSortBy: function(e){
 			store.commit("updateSelectedSortBy", e.target.value);
+			store.commit('setCatFeed', []);
+			store.commit("setCatOutput", []);
+			this.getFeed();
 		},
 		init: function(){
+			var typeQuery = this.$route.query.type;
+			var columnsQuery = this.$route.query.columns;
+			var sortQuery = this.$route.query.sort;
+
+			if(typeQuery){
+				store.commit("updateSelectedCat", typeQuery)
+			}
+			if(columnsQuery){
+				store.commit("updateColumns", columnsQuery);
+			}
+			if(sortQuery){
+				store.commit("updateSelectedSortBy", sortQuery);
+			}
+
+			this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
+			
 			if(store.state.categories.length == 0){
 				this.getCats();
 			}
@@ -89,18 +102,9 @@ var combined = {
 			}
 			this.getFeed();
 		},
-		getImage: function(pageName){
-			if(store.state.pages.length > 0){
-				var page = store.state.pages.find(function(element){
-					return element.name == pageName;
-				});
-				return page.picture;				
-			}else{
-				return null;
-			}
 
-		},
 		getFeed: function(){
+			this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
 			this.$http.get('/api/cat/' + store.state.selectedCat, {params: {sort: store.state.selectedSortBy}})
 			.then(function(response) {
 				store.commit('setCatFeed', response.body);
@@ -114,7 +118,7 @@ var combined = {
 				if(f.attachment && this.isVideo(f.attachment.type)){
 					f.attachment.url = 'fbvid.html?url='+f.attachment.url
 				}
-				f.image_logo = this.getImage(f.pageName);
+				f.image_logo = this.getPageLogo(f.pageName);
 			}, this);
 			store.commit('setCatOutput', this.chop(store.state.catFeed));
 		}

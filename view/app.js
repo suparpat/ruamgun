@@ -9,7 +9,7 @@ var routes = [
 	{ path: '/combined', component: combined },
 	{ path: '/page', component: separatePages },
 	{ path: '/sources', component: sourcePage },
-	{ path: '/item/:id', component: item },
+	{ path: '/:page/:id', component: item },
     { path: '*', component: notFoundPage }
 
 ]

@@ -7,7 +7,7 @@ var separatePages = {
 	},
 	template: `
 		<div>
-			<div style="margin: 10px 0px 10px 0px">
+			<div style="margin: 10px 0px 10px 0px; text-align: center;">
 				<select :value="columns" @input="updateColumns">
 					<option v-for="n in maxCols">{{n}}</option>
 				</select>
@@ -18,8 +18,8 @@ var separatePages = {
 					<option v-for="sb in sortBy">{{sb}}</option>
 				</select>
 			</div>
-			<span>
-				<h4 style="display: inline-block; vertical-align:bottom;">{{pageInfo.name}}: {{pageInfo.about}}</h4>
+			<span style="text-align: center;">
+				<h4>{{pageInfo.name}}: {{pageInfo.about}}</h4>
 			</span>
 			<div style="clear: both;"></div>			
 			<my-table :output="output"></my-table>
@@ -49,37 +49,35 @@ var separatePages = {
 			return store.state.pageInfo;
 		}
 	},
+	mounted:  function(){
+		this.updateRoute('page', store.state.selectedPage, store.state.columns, store.state.selectedSortBy)
+	},
 	created: function(){
 		if(store.state.output.length == 0){
 			this.init();
 		}
 	},
 	watch:{
-		'columns': function(){
-			store.commit("setOutput", this.chop(store.state.feed))
-		},
-		'selectedPage': function(){
-			store.commit('setFeed', []);
-			store.commit("setOutput", []);
-			this.getFeed();
-			this.getSelectedPageInfo()
-		},
-		'selectedSortBy': function(){
-			store.commit('setFeed', []);
-			store.commit("setOutput", []);
-			this.getFeed();
-			this.getSelectedPageInfo()
-		}
 	},
 	methods: {
 		updateSelectedPage: function(e){
 			store.commit("updateSelectedPage", e.target.value)
+			store.commit('setFeed', []);
+			store.commit("setOutput", []);
+			this.getFeed();
+			this.getSelectedPageInfo()
 		},
 		updateColumns: function(e){
 			store.commit("updateColumns", e.target.value)
+			store.commit("setOutput", this.chop(store.state.feed))
+			this.updateRoute('page', store.state.selectedPage, store.state.columns, store.state.selectedSortBy)
 		},
 		updateSelectedSortBy: function(e){
 			store.commit("updateSelectedSortBy", e.target.value);
+			store.commit('setFeed', []);
+			store.commit("setOutput", []);
+			this.getFeed();
+			this.getSelectedPageInfo()
 		},
 		init: function(){
 			if(store.state.pages.length == 0){
@@ -88,6 +86,7 @@ var separatePages = {
 			this.getFeed();
 		},
 		getFeed: function(){
+			this.updateRoute('page', store.state.selectedPage, store.state.columns, store.state.selectedSortBy)
 			this.$http.get('/api/page/' + store.state.selectedPage, {params: {sort: store.state.selectedSortBy}})
 			.then(function(response) {
 				store.commit('setFeed', response.body);
@@ -95,6 +94,7 @@ var separatePages = {
 					if(f.attachment && this.isVideo(f.attachment.type)){
 						f.attachment.url = 'fbvid.html?url='+f.attachment.url
 					}
+					f.image_logo = this.getPageLogo(f.pageName);
 				}, this)
 				store.commit('setOutput', this.chop(store.state.feed));
 			}, function(response) {

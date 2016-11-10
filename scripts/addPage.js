@@ -4,11 +4,11 @@ database.start();
 
 
 var pageByCats = {
-	"Thai_News": ["khaosod", "sanooknews", "bangkokpost", "MatichonOnline", "vicenews", "BBCThai"],
+	"Thai_News": ["khaosod", "sanooknews", "bangkokpost", "MatichonOnline", "BBCThai"],
 	"Thai_Tech_News": ["TechTalkThaiCareersAndKnowledge", "blognone", "oraveevivi", "techsauce.co"],
 	"Thai_Blogs": ["DocumentaryClubTH", "thematterco", "themomentumco", "in.one.zaroop", "thatsjrit", "pantipedia", "infographic.thailand", "hoftu", "Lovecumentary", "soimilkbangkok", "quoteV2"],
 	"Thai_Fun": ["Rhudeebyannteam", "9gaginthai"],
-	"International_News": ["bbcnews", "Reuters", "TheEconomist", "wired", "time", "TheIndependentOnline", "theguardian", "wsj", "bloombergbusiness", "financialtimes"],
+	"International_News": ["bbcnews", "Reuters", "vicenews", "TheEconomist", "wired", "time", "TheIndependentOnline", "theguardian", "wsj", "bloombergbusiness", "financialtimes"],
 	"International_Tech_News": ["techinasia", "extremetechdotcom", "TechRadar", "verge", "techcrunch", "MacRumors", "TrustedReviews"],
 	"International_Blogs": ["waitbutwhy", "medium", "reddit", "explosm", "ExistentialComics"],
 	"International_Fun": ["imgur", "9gag", "youtube", "fml"],

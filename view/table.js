@@ -13,26 +13,23 @@ Vue.component('my-table', {
 						<br><p style="margin:0px; float:left;">{{data.created_time | moment}}</p>
 					</span>
 					<div style="clear: both;"></div>
-					<div @click="triggerModal(data)">
-						<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
-						<div v-if="data.attachment">
-							<router-link @click="triggerModal(data)" :to="{path: 'item/'+data.id, params: {id: data.id}}">
-								<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
-							</router-link>
-							<p>{{truncate(data.message)}}</p>
-						</div>
-						<div v-if="!data.attachment">
-							<router-link @click="triggerModal(data)" :to="{path: 'item/'+data.id, params: {id: data.id}}">
+					<router-link :to="{path: data.pageName+'/'+data.id, params: {id: data.id}}" style="text-decoration:none; color: black;">
+						<div>
+							<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
+							<div v-if="data.attachment">
+									<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
+								<p>{{truncate(data.message)}}</p>
+							</div>
+							<div v-if="!data.attachment">
 								<h2>{{truncate(data.message)}}</h2>
-							</router-link>
+							</div>
 						</div>
-					</div>
-					<span>
-						likes: {{data.likes}}
-						shares: {{data.shares}}
-						comments: {{data.comments.count}}
-					</span>
-					
+						<span>
+							likes: {{data.likes}}
+							shares: {{data.shares}}
+							comments: {{data.comments.count}}
+						</span>
+					</router-link>
 				</td>
 			</tr>
 		</table>
@@ -54,11 +51,9 @@ Vue.component('my-table', {
 				return text;
 			}
 		},
-		triggerModal: function(data){
-			store.commit("setModalData", data);
-			// this.modalData = data;
-			this.showModal = true;
-		},
+		// triggerModal: function(data){
+		// 	store.commit("setModalData", data);
+		// },
 		getImage: function(pageName){
 			if(store.state.pages.length > 0){
 				var page = store.state.pages.find(function(element){

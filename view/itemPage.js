@@ -2,33 +2,54 @@
 var item = {
 	template: `
 	<div>
-	    <div v-if="modalData.attachment">
+	    <div v-if="modalData && modalData.attachment">
 			<div style="text-align:center;">
-				<a target="_blank" v-bind:href="formatUrl(modalData.attachment.url, getDataType(modalData))">
+				<a target="_blank" :href="formatUrl(modalData.attachment.url, getDataType(modalData))">
 					<img v-bind:src="modalData.attachment.img_url" style="max-width:100%; height:auto;">
 				</a>
 			</div>
 	    </div>
-	    <p style="white-space: pre-line;">
+	    <p style="white-space: pre-line; text-align: center;">
 		    {{modalData.message}}
 	    </p>
 
-		<a 
-		v-if="modalData.attachment" 
-		target="_blank" 
-		v-bind:href="formatUrl(modalData.attachment.url, getDataType(modalData))">
-			{{modalData.created_time}}
-		</a>
-		<p v-if="!modalData.attachment">{{modalData.created_time}}</p>
+		<div style="text-align:center;">
+			<img :src="modalData.image_logo" style="display:block; margin-left: auto; margin-right: auto;">
+			<a v-if="modalData.attachment" target="_blank" :href="formatUrl(modalData.attachment.url, getDataType(modalData))">
+				{{modalData.created_time}}
+			</a>
+			<br>
+			<a v-if="modalData.attachment" :href="modalData.attachment.url">Link to Facebook</a>
+			<p v-if="!modalData.attachment">{{modalData.created_time}}</p>
+		</div>
+		<div v-if="modalData.comments">
+			<h3 style="text-align: center;">Top Comments</h3>
+			<ul>
+				<li v-for="c in modalData.comments.data">({{c.like_count}} likes) {{c.message}}</li>
+			</ul>
+		</div>
 	</div>
 	`
 	,
+	mixins: [myMixin],
 	computed: {
 		modalData(){
 			return store.state.modalData;
 		}
 	},
+	created: function(){
+		this.init();
+	},
 	methods:{
+		init: function(){
+			if(store.state.pages.length == 0){
+				this.getPages().then(function(){
+					this.getThisPage();
+				})
+			}else{
+				this.getThisPage();
+			}
+		},
 		isVideo: function(type){
 			if(type.toLowerCase().indexOf('video') > -1){
 				return true;
@@ -56,6 +77,17 @@ var item = {
 				return fb_url;
 			}
 
+		},
+		getThisPage: function(){
+			var pageParam = this.$route.params.page;
+			var idParam = this.$route.params.id;
+			this.$http.get('/api/' + pageParam + '/' + idParam).then(function(data) {
+				var d = data.body[0];
+				d.image_logo = this.getPageLogo(d.pageName);
+				store.commit("setModalData", d);
+			}, (response) => {
+				//error
+			})
 		}
 	}
 }
