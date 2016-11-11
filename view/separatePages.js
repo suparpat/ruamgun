@@ -60,6 +60,30 @@ var separatePages = {
 	watch:{
 	},
 	methods: {
+		init: function(){
+			var typeQuery = this.$route.query.type;
+			var columnsQuery = this.$route.query.columns;
+			var sortQuery = this.$route.query.sort;
+
+			if(typeQuery){
+				store.commit("updateSelectedPage", typeQuery)
+			}
+			if(columnsQuery){
+				store.commit("updateColumns", columnsQuery);
+			}else{
+				this.dynamicColumnsPerDevice();
+			}
+			if(sortQuery){
+				store.commit("updateSelectedSortBy", sortQuery);
+			}
+
+			this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
+
+			if(store.state.pages.length == 0){
+				this.getPages();
+			}
+			this.getFeed();
+		},
 		updateSelectedPage: function(e){
 			store.commit("updateSelectedPage", e.target.value)
 			store.commit('setFeed', []);
@@ -79,12 +103,7 @@ var separatePages = {
 			this.getFeed();
 			this.getSelectedPageInfo()
 		},
-		init: function(){
-			if(store.state.pages.length == 0){
-				this.getPages();
-			}
-			this.getFeed();
-		},
+
 		getFeed: function(){
 			this.updateRoute('page', store.state.selectedPage, store.state.columns, store.state.selectedSortBy)
 			this.$http.get('/api/page/' + store.state.selectedPage, {params: {sort: store.state.selectedSortBy}})
