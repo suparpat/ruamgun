@@ -1,6 +1,8 @@
 var express = require('express');
+var moment = require('moment');
 var history = require('connect-history-api-fallback');
 var app = express();
+
 app.use(history());
 var database = require('./database');
 
@@ -47,7 +49,24 @@ app.get('/api/cat/:cat', function(req, res){
 
 
 app.get('/api/pages', function(req, res){
-	res.json(database.getPages());
+	database.find("pages", {}, "created_time", function(returnedPages, err){
+		database.find("stats", {}, null, function(stats){
+			returnedPages = returnedPages.map(function(p){
+				var pageStats = stats.find(function(s){
+					return p.name == s.page;
+				});
+				pageStats.updated_at.reverse();
+				pageStats = pageStats.updated_at.map(function(ps){
+					return moment(ps).format('MMMM Do YYYY, h:mm:ss a');
+					// return moment(ps).fromNow();
+				});
+				p.stats = pageStats;
+				return p;
+			})
+			res.json(returnedPages);
+		})
+	})
+	// res.json(database.getPages());
 });
 
 
@@ -57,6 +76,12 @@ app.get('/api/cats', function(req, res){
 
 app.get('/api/:page/:id', function(req, res){
 	database.find(req.params.page, {'id': req.params.id}, 'created_time', function(data){
+		res.json(data);
+	})
+})
+
+app.get('/api/stats', function(req, res){
+	database.find("stats", {}, null, function(data){
 		res.json(data);
 	})
 })

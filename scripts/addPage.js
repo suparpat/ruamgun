@@ -11,7 +11,7 @@ var pageByCats = {
 	"International_News": ["bbcnews", "Reuters", "vicenews", "TheEconomist", "wired", "time", "TheIndependentOnline", "theguardian", "wsj", "bloombergbusiness", "financialtimes"],
 	"International_Tech_News": ["techinasia", "extremetechdotcom", "TechRadar", "verge", "techcrunch", "MacRumors", "TrustedReviews"],
 	"International_Blogs": ["waitbutwhy", "medium", "reddit", "explosm", "ExistentialComics"],
-	"International_Fun": ["imgur", "9gag", "youtube", "fml"],
+	"International_Fun": ["imgur", "9gag", "fml"],
 	"World": ["natgeo", "Discovery", "NASA"]
 }
 

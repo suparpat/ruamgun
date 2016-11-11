@@ -61,13 +61,15 @@ var myMixin = {
 			var p = store.state.pages.find(function(element){
 				return element.name == store.state.selectedPage
 			})
+			if(p){
+				var pageInfo = {};
+				pageInfo.name = p.name;
+				pageInfo.about = p.about;
+				pageInfo.picture = p.picture;
 
-			var pageInfo = {};
-			pageInfo.name = p.name;
-			pageInfo.about = p.about;
-			pageInfo.picture = p.picture;
+				store.commit("setPageInfo", pageInfo)				
+			}
 
-			store.commit("setPageInfo", pageInfo)
 		},
 		chop: function(feed){
 			//array of arrays

@@ -118,18 +118,27 @@ function fetch(feedConfig){
 					var feedLength = feedData.length;
 					console.log("Done querying page " + thisPage.name, "length: " + feedLength);
 					if(feedLength > 0){
+						database.upsert("stats", {page: thisPage.name}, {$push: {updated_at: {$each: [Date.now()], $slice: config.stats.max_page_timestamps}}}, function(numReplaced){
 
+						})
+						// database.insert("stats", {
+						// 	page: thisPage.name,
+						// 	updated_at: Date.now()
+						// })
 						//Check each post for duplicate. If no duplicate, insert to db
+						console.log('[feed] inserting to ' + thisPage.name);
 						feedData.forEach(function(item){
-							database.find(thisPage.name, {"id": item.id}, 'created_time', function(duplicate){
-								if(duplicate.length == 0){
-									console.log('[feed] inserting to ' + thisPage.name);
+							// database.find(thisPage.name, {"id": item.id}, 'created_time', function(duplicate){
+							// 	if(duplicate.length == 0){
 									var temp_item = createItem(item, thisPage.name);
-									database.insert(thisPage.name, temp_item);
-								}else{
+									// database.insert(thisPage.name, temp_item);
+									database.upsert(thisPage.name, {id: temp_item.id}, temp_item, function(numReplaced){
+
+									})
+								// }else{
 									// console.log("[feed] duplicate " + item.id)
-								}
-							})					
+								// }
+							// })					
 						})
 				
 						running--;

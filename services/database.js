@@ -3,8 +3,16 @@ var Datastore = require('nedb');
 var db = {};
 var pages = [];
 var cats = [];
+var config = require('./config.json');
+
 function start(cb){
+	var compactionInterval = 1000 * 60 * config.database.compaction_interval_minutes;
+
 	db.pages = new Datastore({ filename: 'db/pages', autoload: true });
+	db.stats = new Datastore({ filename: 'db/stats', autoload: true });
+
+	db.pages.persistence.setAutocompactionInterval(compactionInterval);
+	db.stats.persistence.setAutocompactionInterval(compactionInterval);
 
 	db.pages.find({}, function(err, docs){
 		pages = docs;
@@ -12,7 +20,8 @@ function start(cb){
 			var pageName = pages[i].name;
 			if(pageName){
 				console.log('[database] creating/loading database ' + pageName)
-				db[pageName] = new Datastore({ filename: 'db/fb_pages/' + pageName, autoload: true });				
+				db[pageName] = new Datastore({ filename: 'db/fb_pages/' + pageName, autoload: true });	
+				db[pageName].persistence.setAutocompactionInterval(compactionInterval);			
 			}
 		}
 
@@ -58,6 +67,18 @@ function insert(dbName, data){
 	}
 }
 
+function upsert(dbName, query, update, cb){
+	db[dbName].update(query, update, {upsert: true}, function(err, numReplaced){
+		cb(numReplaced);
+	})
+	var pageCat = getPageCat(dbName);
+	if(pageCat){
+		db[pageCat].update(query, update, {upsert: true}, function(err, numReplaced){
+			cb(numReplaced);
+		})
+	}
+}
+
 function update(dbName, query, update, cb){
 	db[dbName].update(query, update, {}, function(err, numReplaced){
 		cb(numReplaced);
@@ -67,14 +88,22 @@ function update(dbName, query, update, cb){
 function find(dbName, expression, sort, cb){
 	var sortExp = {};
 	sortExp[sort] = -1;
+	if(db[dbName]){
+		var query = db[dbName];
+		query = query.find(expression)
 
-	db[dbName]
-	.find(expression)
-	.sort(sortExp)
-	.limit(50)
-	.exec(function(err, docs){
-		cb(docs, err);
-	})
+		if(sortExp){
+			query = query.sort(sortExp)
+		}
+
+		query = query.limit(50)
+		query.exec(function(err, docs){
+			cb(docs, err);
+		})		
+	}else{
+		cb([], "Database not found!");
+	}
+
 }
 
 function getPages(){
@@ -92,5 +121,6 @@ module.exports = {
 	find: find,
 	update: update,
 	getPages: getPages,
-	getCats: getCats
+	getCats: getCats,
+	upsert: upsert
 }

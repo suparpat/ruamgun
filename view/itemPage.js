@@ -19,7 +19,7 @@ var item = {
 				{{modalData.created_time}}
 			</a>
 			<br>
-			<a v-if="modalData.attachment" :href="modalData.attachment.url">Link to Facebook</a>
+			<a :href="linkToFb(modalData.id)" target="_blank">Link to Facebook</a>
 			<p v-if="!modalData.attachment">{{modalData.created_time}}</p>
 		</div>
 		<div v-if="modalData.comments">
@@ -77,6 +77,9 @@ var item = {
 				return fb_url;
 			}
 
+		},
+		linkToFb: function(id){
+			return "https://facebook.com/" + id;
 		},
 		getThisPage: function(){
 			var pageParam = this.$route.params.page;
