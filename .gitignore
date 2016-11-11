@@ -86,5 +86,5 @@ $RECYCLE.BIN/
 db/fb_pages/
 services/config.json
 db/combined/
-db/pages
 db/stats
+db/pages

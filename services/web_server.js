@@ -55,11 +55,14 @@ app.get('/api/pages', function(req, res){
 				var pageStats = stats.find(function(s){
 					return p.name == s.page;
 				});
-				pageStats.updated_at.reverse();
-				pageStats = pageStats.updated_at.map(function(ps){
-					return moment(ps).format('MMMM Do YYYY, h:mm:ss a');
-					// return moment(ps).fromNow();
-				});
+				if(pageStats && pageStats.updated_at){
+					pageStats.updated_at.reverse();
+					pageStats = pageStats.updated_at.map(function(ps){
+						return moment(ps).format('MMMM Do YYYY, h:mm:ss a');
+						// return moment(ps).fromNow();
+					});
+				}
+
 				p.stats = pageStats;
 				return p;
 			})
