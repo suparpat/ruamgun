@@ -7,7 +7,7 @@ var pageByCats = {
 	"Thai_News": ["khaosod", "sanooknews", "bangkokpost", "MatichonOnline", "BBCThai", "Prachatai", "msnthailand"],
 	"Thai_Tech_News": ["TechTalkThaiCareersAndKnowledge", "blognone", "oraveevivi", "techsauce.co", "thaiopensource"],
 	"Thai_Blogs": ["DocumentaryClubTH", "thematterco", "themomentumco", "in.one.zaroop", "thatsjrit", "pantipedia", "infographic.thailand", "hoftu", "Lovecumentary", "soimilkbangkok", "quoteV2"],
-	"Thai_Persons": ["wannasingh", "supassraclub", "Sueching.chin", "winlyovarin", "204024313004149"],	
+	"Thai_Persons": ["wannasingh", "supassraclub", "winlyovarin", "204024313004149"],	
 	"Thai_Fun": ["Rhudeebyannteam", "9gaginthai"],
 	"International_News": ["bbcnews", "Reuters", "vicenews", "TheEconomist", "wired", "time", "TheIndependentOnline", "theguardian", "wsj", "bloombergbusiness", "financialtimes", "MSN.News"],
 	"International_Tech_News": ["techinasia", "extremetechdotcom", "TechRadar", "verge", "techcrunch", "MacRumors", "TrustedReviews"],
@@ -22,7 +22,7 @@ for(var cat in pageByCats){
 	// console.log(cat, pageByCats[cat])
 	pageByCats[cat].forEach(function(page){
 		var current_cat = cat;
-		database.find("pages", {"name": page}, 'created_time', function(duplicate){
+		database.find("pages", {"name": page}, 'created_time', null, function(duplicate){
 			if(duplicate.length == 0){
 				console.log('inserting page ' + page, current_cat);
 				database.insert("pages", {"name": page, "cat": current_cat});			

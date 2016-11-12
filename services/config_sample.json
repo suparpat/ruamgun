@@ -11,7 +11,17 @@
 	},
 	"feeds":{
 		"mode": "latest",
-		"latest": 300,
+		"latest": 100,
+		"limit_per_query": 25,
 		"days_since": 3
+	},
+	"database":{
+		"compaction_interval_minutes": 30
+	},
+	"stats": {
+		"max_page_timestamps": 3
+	},
+	"view": {
+		"page_item_limit": 50
 	}
 }

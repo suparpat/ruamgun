@@ -47,12 +47,18 @@ function start(){
 function getPageInfo(){
 	var fields = ["about", "picture", "fan_count"];
 	var fieldsQuery = "fields=" + fields.join(",");
-	database.find("pages", {}, 'created_time', function(pages, err){
+	database.find("pages", {}, null, null, function(pages, err){
 		var pageLength = pages.length;
+		var pageNames = pages.map(function(p){return p.name;}).join(", ");
+		console.log("\n=====");
+		console.log("Getting page information for " + pages.length + " pages");
+		console.log(pageNames);
+		console.log("=====\n");
+
 		recurse(0, pageLength)
 		function recurse(currentPage, pageLength){
 			var page = pages[currentPage];
-			console.log("[feed] Getting page info for page: " + page.name)
+			// console.log("[feed] Getting page info for page: " + page.name)
 			graph.setOptions(options).get(page.name + "?" + fieldsQuery, function(err, res){
 				if(!err){
 					// console.log(res);
@@ -108,7 +114,12 @@ function getPageInfo(){
 
 function fetch(feedConfig){
 	// try{
-		database.find("pages", {}, 'created_time', function(pages){
+		database.find("pages", {}, null, null, function(pages){
+			var pageNames = pages.map(function(p){return p.name;}).join(", ");
+			console.log("\n=====");
+			console.log("recursing through " + pages.length + "pages");
+			console.log(pageNames)
+			console.log("=====\n");
 
 			recurse(0, pages.length)
 
@@ -117,7 +128,7 @@ function fetch(feedConfig){
 				running++;
 				getPage(thisPage.name, feedConfig, function(feedData){
 					var feedLength = feedData.length;
-					console.log("Done querying page " + thisPage.name, "length: " + feedLength);
+					// console.log("Done querying page " + thisPage.name, "length: " + feedLength);
 					if(feedLength > 0){
 						database.upsert("stats", {page: thisPage.name}, {$push: {updated_at: {$each: [Date.now()], $slice: -config.stats.max_page_timestamps}}}, function(numReplaced){
 
@@ -127,7 +138,7 @@ function fetch(feedConfig){
 						// 	updated_at: Date.now()
 						// })
 						//Check each post for duplicate. If no duplicate, insert to db
-						console.log('[feed] inserting to ' + thisPage.name);
+						// console.log('[feed] inserting to ' + thisPage.name);
 						feedData.forEach(function(item){
 							// database.find(thisPage.name, {"id": item.id}, 'created_time', function(duplicate){
 							// 	if(duplicate.length == 0){
@@ -253,7 +264,7 @@ function getPage(pageId, feedConfig, callback){
 		console.log(msg);
 		throw msg;
 	}
-	params.limit = 100;
+	params.limit = config.feeds.limit_per_query;
 	params.fields = [
 			"message",
 			"created_time",
@@ -310,7 +321,7 @@ function get(params, pageCount, output, cb){
 		}
 
 		var firstCallUrl = pageId + "/feed?" + query;
-		console.log("[feed] Querying page " + pageId);
+		// console.log("[feed] Querying page " + pageId);
 
 		graph.setOptions(options)
 			  .get(firstCallUrl, function(err, res) {

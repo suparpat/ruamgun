@@ -15,11 +15,16 @@ function start(cb){
 	db.stats.persistence.setAutocompactionInterval(compactionInterval);
 
 	db.pages.find({}, function(err, docs){
+		var pageNames = docs.map(function(p){return p.name;}).join(", ");
+		console.log("\n=====");
+		console.log('[database] creating/loading ' + docs.length + ' databases ');
+		console.log(pageNames);
+		console.log("=====\n");
 		pages = docs;
 		for(var i = 0; i < pages.length; i++){
 			var pageName = pages[i].name;
 			if(pageName){
-				console.log('[database] creating/loading database ' + pageName)
+				// console.log('[database] creating/loading database ' + pageName)
 				db[pageName] = new Datastore({ filename: 'db/fb_pages/' + pageName, autoload: true });	
 				db[pageName].persistence.setAutocompactionInterval(compactionInterval);			
 			}
@@ -33,8 +38,13 @@ function start(cb){
 				return array.indexOf(element) == index;
 			});
 
+			var catNames = cats.join(", ");
+			console.log("\n=====");
+			console.log('[database] creating/loading ' + cats.length + ' databases ');
+			console.log(catNames);
+			console.log("=====\n");
 			cats.forEach(function(c){
-				console.log('[database] creating/loading database ' + c);
+				// console.log('[database] creating/loading database ' + c);
 				db[c] = new Datastore({ filename: 'db/combined/' + c, autoload: true});
 			})			
 		}
@@ -85,7 +95,7 @@ function update(dbName, query, update, cb){
 	})
 }
 
-function find(dbName, expression, sort, cb){
+function find(dbName, expression, sort, limit, cb){
 	var sortExp = {};
 	sortExp[sort] = -1;
 	if(db[dbName]){
@@ -95,8 +105,9 @@ function find(dbName, expression, sort, cb){
 		if(sortExp){
 			query = query.sort(sortExp)
 		}
-
-		query = query.limit(50)
+		if(limit){
+			query = query.limit(limit)	
+		}
 		query.exec(function(err, docs){
 			cb(docs, err);
 		})		

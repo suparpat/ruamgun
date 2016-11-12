@@ -1,6 +1,7 @@
 var express = require('express');
 var moment = require('moment');
 var history = require('connect-history-api-fallback');
+var config = require('./config.json');
 var app = express();
 
 app.use(history());
@@ -24,7 +25,7 @@ function start(port){
 app.get('/api/page/:page', function(req, res){
 	var page = req.params.page
 	if(page){
-		database.find(page, {}, req.query.sort, function(data){
+		database.find(page, {}, req.query.sort, config.view.page_item_limit, function(data){
 			res.send(data);
 		})
 	}else{
@@ -38,7 +39,7 @@ app.get('/api/cat/:cat', function(req, res){
 	var cat = req.params.cat;
 	// console.log(cat, req.query.sort)
 	if(cat){
-		database.find(cat, {}, req.query.sort, function(data){
+		database.find(cat, {}, req.query.sort, config.view.page_item_limit, function(data){
 			res.send(data);
 		})
 	}else{
@@ -49,8 +50,8 @@ app.get('/api/cat/:cat', function(req, res){
 
 
 app.get('/api/pages', function(req, res){
-	database.find("pages", {}, "created_time", function(returnedPages, err){
-		database.find("stats", {}, null, function(stats){
+	database.find("pages", {}, "created_time", null, function(returnedPages, err){
+		database.find("stats", {}, null, null, function(stats){
 			returnedPages = returnedPages.map(function(p){
 				var pageStats = stats.find(function(s){
 					return p.name == s.page;
@@ -78,13 +79,13 @@ app.get('/api/cats', function(req, res){
 });
 
 app.get('/api/:page/:id', function(req, res){
-	database.find(req.params.page, {'id': req.params.id}, 'created_time', function(data){
+	database.find(req.params.page, {'id': req.params.id}, 'created_time', null, function(data){
 		res.json(data);
 	})
 })
 
 app.get('/api/stats', function(req, res){
-	database.find("stats", {}, null, function(data){
+	database.find("stats", {}, null, null, function(data){
 		res.json(data);
 	})
 })
