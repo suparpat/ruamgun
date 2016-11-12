@@ -45,7 +45,7 @@ function start(){
 
 
 function getPageInfo(){
-	var fields = ["about", "picture"];
+	var fields = ["about", "picture", "fan_count"];
 	var fieldsQuery = "fields=" + fields.join(",");
 	database.find("pages", {}, 'created_time', function(pages, err){
 		var pageLength = pages.length;
@@ -59,7 +59,8 @@ function getPageInfo(){
 					database.update("pages", {name: page.name},
 					 {$set: {
 					 	about: res.about,
-					 	picture: res.picture.data.url
+					 	picture: res.picture.data.url,
+					 	fan_count: res.fan_count
 					 }}, function(numReplaced){
 						// console.log(numReplaced)
 					})		
@@ -118,7 +119,7 @@ function fetch(feedConfig){
 					var feedLength = feedData.length;
 					console.log("Done querying page " + thisPage.name, "length: " + feedLength);
 					if(feedLength > 0){
-						database.upsert("stats", {page: thisPage.name}, {$push: {updated_at: {$each: [Date.now()], $slice: config.stats.max_page_timestamps}}}, function(numReplaced){
+						database.upsert("stats", {page: thisPage.name}, {$push: {updated_at: {$each: [Date.now()], $slice: -config.stats.max_page_timestamps}}}, function(numReplaced){
 
 						})
 						// database.insert("stats", {

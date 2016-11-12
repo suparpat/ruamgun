@@ -4,15 +4,18 @@ database.start();
 
 
 var pageByCats = {
-	"Thai_News": ["khaosod", "sanooknews", "bangkokpost", "MatichonOnline", "BBCThai"],
-	"Thai_Tech_News": ["TechTalkThaiCareersAndKnowledge", "blognone", "oraveevivi", "techsauce.co"],
+	"Thai_News": ["khaosod", "sanooknews", "bangkokpost", "MatichonOnline", "BBCThai", "Prachatai", "msnthailand"],
+	"Thai_Tech_News": ["TechTalkThaiCareersAndKnowledge", "blognone", "oraveevivi", "techsauce.co", "thaiopensource"],
 	"Thai_Blogs": ["DocumentaryClubTH", "thematterco", "themomentumco", "in.one.zaroop", "thatsjrit", "pantipedia", "infographic.thailand", "hoftu", "Lovecumentary", "soimilkbangkok", "quoteV2"],
+	"Thai_Persons": ["wannasingh", "supassraclub", "Sueching.chin", "winlyovarin", "204024313004149"],	
 	"Thai_Fun": ["Rhudeebyannteam", "9gaginthai"],
-	"International_News": ["bbcnews", "Reuters", "vicenews", "TheEconomist", "wired", "time", "TheIndependentOnline", "theguardian", "wsj", "bloombergbusiness", "financialtimes"],
+	"International_News": ["bbcnews", "Reuters", "vicenews", "TheEconomist", "wired", "time", "TheIndependentOnline", "theguardian", "wsj", "bloombergbusiness", "financialtimes", "MSN.News"],
 	"International_Tech_News": ["techinasia", "extremetechdotcom", "TechRadar", "verge", "techcrunch", "MacRumors", "TrustedReviews"],
-	"International_Blogs": ["waitbutwhy", "medium", "reddit", "explosm", "ExistentialComics"],
+	"International_Tech_News_Technical": ["hnbot"],
+	"International_Blogs": ["waitbutwhy", "medium", "reddit", "explosm", "ExistentialComics", "IFeakingLoveScience"],
 	"International_Fun": ["imgur", "9gag", "fml"],
-	"World": ["natgeo", "Discovery", "NASA"]
+	"World": ["natgeo", "Discovery", "NASA"],
+	"Lifestyle": ["LondonDrugs", "NewYorkerCartoons", "MSNLifestyle"]
 }
 
 for(var cat in pageByCats){
@@ -29,3 +32,4 @@ for(var cat in pageByCats){
 		})		
 	})
 }
+
