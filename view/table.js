@@ -4,7 +4,7 @@
 
 Vue.component('my-table', {
 	template: `
-		<table style="width:100%; table-layout: fixed; word-break: break-word; border-collapse: collapse; border:none">
+		<table style="width:100%; table-layout: fixed; word-break: break-word;>
 			<tr v-for="row in output">
 				<td v-for="data in row" style="text-align: center; vertical-align: top;">
 					<span style="display: block; padding-bottom: 4px">
