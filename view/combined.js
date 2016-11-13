@@ -52,7 +52,8 @@ var combined = {
 		}
 	},
 	mounted:  function(){
-		this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
+		this.init();
+		// this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
 	},
 	watch:{
 		'pages': function(){

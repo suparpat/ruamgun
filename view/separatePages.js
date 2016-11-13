@@ -50,7 +50,8 @@ var separatePages = {
 		}
 	},
 	mounted:  function(){
-		this.updateRoute('page', store.state.selectedPage, store.state.columns, store.state.selectedSortBy)
+		this.init()
+		// this.updateRoute('page', store.state.selectedPage, store.state.columns, store.state.selectedSortBy)
 	},
 	created: function(){
 		if(store.state.output.length == 0){

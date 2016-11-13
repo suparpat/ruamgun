@@ -8,7 +8,7 @@ Vue.component('my-table', {
 			<tr v-for="row in output">
 				<td v-for="data in row" style="text-align: center; vertical-align: top;">
 					<span style="display: block; padding-bottom: 4px">
-						<img style="height: 40px; float:left; margin-right: 5px;" :src="data.image_logo">
+						<router-link :to="linkToPage(data.pageName)"><img style="height: 40px; float:left; margin-right: 5px;" :src="data.image_logo"></router-link>
 						<h4 style="margin:0px; float: left;">{{data.pageName}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></h4>
 						<br><p style="margin:0px; float:left;">{{data.created_time | moment}}</p>
 					</span>
@@ -68,6 +68,9 @@ Vue.component('my-table', {
 		},
 		moment: function(){
 			return moment();
+		},
+		linkToPage: function(pageName){
+			return "/page?type="+pageName;
 		}
 	},
 	filters: {
