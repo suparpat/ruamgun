@@ -71,7 +71,6 @@ var item = {
 		formatUrl: function(fb_url, type){
 			// return fb_url;
 			if(type.toLowerCase() == "share"){
-				console.log(decodeURIComponent(fb_url))
 				var url = decodeURIComponent(fb_url);
 				url = url.substring(url.indexOf("=") + 1)
 				url = url.substring(0, url.indexOf("&"));

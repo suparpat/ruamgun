@@ -78,7 +78,7 @@ var combined = {
 				store.commit("updateSelectedSortBy", sortQuery);
 			}
 
-			this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
+			// this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
 			
 			if(store.state.categories.length == 0){
 				this.getCats();

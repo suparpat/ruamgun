@@ -10,7 +10,6 @@ var myMixin = {
 			else{
 				store.commit('updateColumns', 4);
 			}
-			store.commit("setCatOutput", this.chop(store.state.catFeed))
 
 		},
 		getCats: function(){

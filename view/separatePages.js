@@ -78,7 +78,7 @@ var separatePages = {
 				store.commit("updateSelectedSortBy", sortQuery);
 			}
 
-			this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
+			// this.updateRoute('combined', store.state.selectedCat, store.state.columns, store.state.selectedSortBy)
 
 			if(store.state.pages.length == 0){
 				this.getPages();
