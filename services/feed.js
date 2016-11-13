@@ -6,7 +6,7 @@ var config = require('./config');
 
 var running = 0;
 var options = {
-	    timeout:  7000
+	    timeout:  10000
 	  , pool:     { maxSockets:  5 }
 	  , headers:  { connection:  "keep-alive" }
 	};

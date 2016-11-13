@@ -4,9 +4,9 @@
 
 Vue.component('my-table', {
 	template: `
-		<table style="width:100%; table-layout: fixed; word-break: break-word;">
+		<table style="width:100%; table-layout: fixed; word-break: break-word; border-collapse: collapse; border:none">
 			<tr v-for="row in output">
-				<td v-for="data in row" style="text-align: center; vertical-align: top">
+				<td v-for="data in row" style="text-align: center; vertical-align: top;">
 					<span style="display: block; padding-bottom: 4px">
 						<img style="height: 40px; float:left; margin-right: 5px;" :src="data.image_logo">
 						<h4 style="margin:0px; float: left;">{{data.pageName}} <span v-if="data.attachment">[{{data.attachment.type}}]</span></h4>
