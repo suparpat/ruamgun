@@ -17,7 +17,8 @@ Vue.component('my-table', {
 						<div>
 							<!-- http://www.w3schools.com/css/css_rwd_images.asp -->
 							<div v-if="data.attachment">
-									<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
+								<p style="font-weight:bold;">{{truncate(data.attachment.title)}}</p>
+								<img v-bind:src="data.attachment.img_url" style="width:100%; height:auto;">
 								<p>{{truncate(data.message)}}</p>
 							</div>
 							<div v-if="!data.attachment">

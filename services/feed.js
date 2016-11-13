@@ -49,10 +49,10 @@ function getPageInfo(){
 	var fieldsQuery = "fields=" + fields.join(",");
 	database.find("pages", {}, null, null, function(pages, err){
 		var pageLength = pages.length;
-		var pageNames = pages.map(function(p){return p.name;}).join(", ");
+		// var pageNames = pages.map(function(p){return p.name;}).join(", ");
 		console.log("\n=====");
 		console.log("Getting page information for " + pages.length + " pages");
-		console.log(pageNames);
+		// console.log(pageNames);
 		console.log("=====\n");
 
 		recurse(0, pageLength)
@@ -115,10 +115,10 @@ function getPageInfo(){
 function fetch(feedConfig){
 	// try{
 		database.find("pages", {}, null, null, function(pages){
-			var pageNames = pages.map(function(p){return p.name;}).join(", ");
+			// var pageNames = pages.map(function(p){return p.name;}).join(", ");
 			console.log("\n=====");
 			console.log("recursing through " + pages.length + "pages");
-			console.log(pageNames)
+			// console.log(pageNames)
 			console.log("=====\n");
 
 			recurse(0, pages.length)
@@ -212,6 +212,11 @@ function createItem(d, pageName){
 	t.message = d.message;
 	t.created_time = new Date(d.created_time);
 	t.id = d.id;
+
+	if(d.full_picture){
+		t.full_picture = d.full_picture;
+	}
+	
 	if(d.likes){
 		t.likes = d.likes.summary.total_count;
 	}
@@ -272,7 +277,8 @@ function getPage(pageId, feedConfig, callback){
 			"attachments",
 			"likes.limit(0).summary(true)",
 			"comments.limit(5).summary(true){like_count,message}",
-			"shares"
+			"shares",
+			"full_picture"
 	 ]
 
 

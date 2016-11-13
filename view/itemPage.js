@@ -4,8 +4,10 @@ var item = {
 	<div>
 	    <div v-if="modalData && modalData.attachment">
 			<div style="text-align:center;">
+				<h1>{{modalData.attachment.title}}</h1>
 				<a target="_blank" :href="formatUrl(modalData.attachment.url, getDataType(modalData))">
-					<img v-bind:src="modalData.attachment.img_url" style="max-width:100%; height:auto;">
+					<!-- <img v-bind:src="modalData.attachment.img_url" style="max-width:100%; height:auto;"> -->
+					<img v-bind:src="modalData.full_picture" style="max-width:100%; max-height:80vh;">
 				</a>
 			</div>
 	    </div>
@@ -14,7 +16,9 @@ var item = {
 	    </p>
 
 		<div style="text-align:center;">
-			<img :src="modalData.image_logo" style="display:block; margin-left: auto; margin-right: auto;">
+			<a target="_blank" :href="linkToFb(modalData.pageName)">
+				<img :src="modalData.image_logo" style="display:block; margin-left: auto; margin-right: auto;">
+			</a>
 			<a v-if="modalData.attachment" target="_blank" :href="formatUrl(modalData.attachment.url, getDataType(modalData))">
 				{{modalData.created_time}}
 			</a>
@@ -22,11 +26,9 @@ var item = {
 			<a :href="linkToFb(modalData.id)" target="_blank">Link to Facebook</a>
 			<p v-if="!modalData.attachment">{{modalData.created_time}}</p>
 		</div>
-		<div v-if="modalData.comments">
-			<h3 style="text-align: center;">Top Comments</h3>
-			<ul>
-				<li v-for="c in modalData.comments.data">({{c.like_count}} likes) {{c.message}}</li>
-			</ul>
+		<div v-if="modalData.comments"  style="text-align: center;">
+			<h3>Top Comments</h3>
+			<p v-for="c in modalData.comments.data">{{c.message}}<br>({{c.like_count}} likes)</p>
 		</div>
 	</div>
 	`
@@ -42,6 +44,7 @@ var item = {
 	},
 	methods:{
 		init: function(){
+			store.commit("setModalData", {})
 			if(store.state.pages.length == 0){
 				this.getPages().then(function(){
 					this.getThisPage();

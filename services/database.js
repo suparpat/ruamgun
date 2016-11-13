@@ -46,6 +46,7 @@ function start(cb){
 			cats.forEach(function(c){
 				// console.log('[database] creating/loading database ' + c);
 				db[c] = new Datastore({ filename: 'db/combined/' + c, autoload: true});
+				db[c].persistence.setAutocompactionInterval(compactionInterval);			
 			})			
 		}
 
