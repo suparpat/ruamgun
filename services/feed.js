@@ -139,20 +139,31 @@ function fetch(feedConfig){
 						// })
 						//Check each post for duplicate. If no duplicate, insert to db
 						// console.log('[feed] inserting to ' + thisPage.name);
-						feedData.forEach(function(item){
+						var temp_items = []
+						feedData.forEach(function(item, index){
 							// database.find(thisPage.name, {"id": item.id}, 'created_time', function(duplicate){
 							// 	if(duplicate.length == 0){
 									var temp_item = createItem(item, thisPage.name);
 									// database.insert(thisPage.name, temp_item);
-									database.upsert(thisPage.name, {id: temp_item.id}, temp_item, function(numReplaced){
-
-									})
+									temp_items.push(temp_item);
+									// database.upsert(thisPage.name, {id: temp_item.id}, temp_item, function(numReplaced){
+									// 	console.log('upserted', index)
+									// })
 								// }else{
 									// console.log("[feed] duplicate " + item.id)
 								// }
 							// })					
 						})
-				
+						database.remove(thisPage.name, {}, function(err, pageNumRemoved, pageCatNumRemoved){
+							console.log(err, 'pageNumRemoved: '+pageNumRemoved, 'pageCatNumRemoved: '+pageCatNumRemoved)
+							database.insert(thisPage.name, temp_items, function(pageErr, pageCatErr){
+								if(pageErr || pageCatErr){
+									console.log(pageErr, pageCatErr);
+								}
+								database.compact(thisPage.name);
+								database.compact(database.getPageCat(thisPage.name));
+							})
+						})
 						running--;
 						current_page = current_page + 1;
 						// console.log("CHECK RECURSING", current_page, count_pages, current_page < count_pages)

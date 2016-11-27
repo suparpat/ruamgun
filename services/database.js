@@ -26,7 +26,7 @@ function start(cb){
 			if(pageName){
 				// console.log('[database] creating/loading database ' + pageName)
 				db[pageName] = new Datastore({ filename: 'db/fb_pages/' + pageName, autoload: true });	
-				db[pageName].persistence.setAutocompactionInterval(compactionInterval);			
+				// db[pageName].persistence.setAutocompactionInterval(compactionInterval);			
 			}
 		}
 
@@ -46,7 +46,7 @@ function start(cb){
 			cats.forEach(function(c){
 				// console.log('[database] creating/loading database ' + c);
 				db[c] = new Datastore({ filename: 'db/combined/' + c, autoload: true});
-				db[c].persistence.setAutocompactionInterval(compactionInterval);			
+				// db[c].persistence.setAutocompactionInterval(compactionInterval);			
 			})			
 		}
 
@@ -70,16 +70,20 @@ function getPageCat(page){
 	}
 }
 
-function insert(dbName, data){
-	db[dbName].insert(data);
-	var pageCat = getPageCat(dbName);
-	if(pageCat){
-		db[pageCat].insert(data);
-	}
+function insert(dbName, data, cb){
+	db[dbName].insert(data,function(pageErr){
+		var pageCat = getPageCat(dbName);
+		if(pageCat){
+			db[pageCat].insert(data, function(pageCatErr){
+				cb(pageErr, pageCatErr)
+			});
+		}		
+	});
+
 }
 
 function upsert(dbName, query, update, cb){
-	db[dbName].update(query, update, {upsert: true}, function(err, numReplaced){
+	db[dbName].update(query, update, {upsert: true}, function(err, numReplaced, affectedDocuments, upsert){
 		cb(numReplaced);
 	})
 	var pageCat = getPageCat(dbName);
@@ -118,6 +122,17 @@ function find(dbName, expression, sort, limit, cb){
 
 }
 
+function remove(dbName, query, cb){
+	db[dbName].remove(query, {multi: true}, function(err, pageNumRemoved){
+		var pageCat = getPageCat(dbName);
+		if(pageCat){
+			db[pageCat].remove({pageName: dbName}, {multi: true}, function(err, pageCatNumRemoved){
+				cb(err, pageNumRemoved, pageCatNumRemoved)
+			})
+		}
+	});
+}
+
 function getPages(){
 	return pages;
 }
@@ -126,6 +141,9 @@ function getCats(){
 	return cats;
 }
 
+function compact(dbName){
+	db[dbName].persistence.compactDataFile;
+}
 
 module.exports = {
 	start: start,
@@ -134,5 +152,8 @@ module.exports = {
 	update: update,
 	getPages: getPages,
 	getCats: getCats,
-	upsert: upsert
+	upsert: upsert,
+	remove: remove,
+	compact: compact,
+	getPageCat: getPageCat
 }
