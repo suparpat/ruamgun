@@ -155,7 +155,9 @@ function fetch(feedConfig){
 							// })					
 						})
 						database.remove(thisPage.name, {}, function(err, pageNumRemoved, pageCatNumRemoved){
-							console.log(err, 'pageNumRemoved: '+pageNumRemoved, 'pageCatNumRemoved: '+pageCatNumRemoved)
+							if(err){
+								console.log(err, 'pageNumRemoved: '+pageNumRemoved, 'pageCatNumRemoved: '+pageCatNumRemoved)
+							}
 							database.insert(thisPage.name, temp_items, function(pageErr, pageCatErr){
 								if(pageErr || pageCatErr){
 									console.log(pageErr, pageCatErr);
