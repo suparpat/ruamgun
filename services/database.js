@@ -142,7 +142,7 @@ function getCats(){
 }
 
 function compact(dbName){
-	db[dbName].persistence.compactDataFile();
+	db[dbName].persistence.compactDatafile();
 }
 
 module.exports = {
