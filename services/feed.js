@@ -341,7 +341,6 @@ function get(params, pageCount, output, cb){
 
 		var firstCallUrl = pageId + "/feed?" + query;
 		// console.log("[feed] Querying page " + pageId);
-
 		graph.setOptions(options)
 			  .get(firstCallUrl, function(err, res) {
 			  	if(err){

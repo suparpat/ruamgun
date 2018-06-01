@@ -15,14 +15,33 @@ function start(cb){
 	db.stats.persistence.setAutocompactionInterval(compactionInterval);
 
 	db.pages.find({}, function(err, docs){
+		if(err){
+			console.log('db error finding!')
+			console.log(err)
+		}
 		var pageNames = docs.map(function(p){return p.name;}).join(", ");
 		console.log("\n=====");
 		console.log('[database] creating/loading ' + docs.length + ' databases ');
 		console.log(pageNames);
 		console.log("=====\n");
 		pages = docs;
-		for(var i = 0; i < pages.length; i++){
-			var pageName = pages[i].name;
+
+		var uniquePages = []
+		pages.forEach((p) => {
+			var find = uniquePages.find((fp) => {
+				if(fp){
+					return fp['name'] == p['name']
+				}else{
+					return null
+				}
+			})
+			if(!find){
+				uniquePages.push(p)
+			}
+		})
+		
+		for(var i = 0; i < uniquePages.length; i++){
+			var pageName = uniquePages[i].name;
 			if(pageName){
 				// console.log('[database] creating/loading database ' + pageName)
 				db[pageName] = new Datastore({ filename: 'db/fb_pages/' + pageName, autoload: true });	
@@ -72,6 +91,10 @@ function getPageCat(page){
 
 function insert(dbName, data, cb){
 	db[dbName].insert(data,function(pageErr){
+		if(pageErr){
+			console.log('db error inserting')
+			console.log(pageErr)
+		}
 		var pageCat = getPageCat(dbName);
 		if(pageCat){
 			db[pageCat].insert(data, function(pageCatErr){
@@ -114,6 +137,10 @@ function find(dbName, expression, sort, limit, cb){
 			query = query.limit(limit)	
 		}
 		query.exec(function(err, docs){
+			if(err){
+				console.log('Error querying db')
+				console.log(err)
+			}
 			cb(docs, err);
 		})		
 	}else{

@@ -22,7 +22,7 @@ Edit array in scripts/addPages.js, then run:
 `node scripts/addPages`
 
 
+## Terminating job
 
-
-
-
+Call 'ps ax' to list running processes
+kill {PID} to kill 
