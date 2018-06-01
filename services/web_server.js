@@ -1,7 +1,7 @@
 var express = require('express');
 var moment = require('moment');
 var history = require('connect-history-api-fallback');
-var config = require('./config.json');
+var config = require('./config');
 var app = express();
 
 app.use(history());

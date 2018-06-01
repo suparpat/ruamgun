@@ -84,7 +84,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 db/fb_pages/
-services/config.json
+services/config.js
 db/combined/
 db/stats
 db/pages

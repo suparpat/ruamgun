@@ -48,21 +48,42 @@ function getPageInfo(){
 	var fields = ["about", "picture", "fan_count"];
 	var fieldsQuery = "fields=" + fields.join(",");
 	database.find("pages", {}, null, null, function(pages, err){
-		var pageLength = pages.length;
+		var uniquePages = []
+		pages.forEach((p) => {
+			var find = uniquePages.find((fp) => {
+				if(fp){
+					return fp['name'] == p['name']
+				}else{
+					return null
+				}
+			})
+			if(!find){
+				uniquePages.push(p)
+			}
+		})
+
+		uniquePages = uniquePages.filter((up) => {
+			return (up['_id'] == undefined)
+		})
+
+		var pageLength = uniquePages.length;
 		// var pageNames = pages.map(function(p){return p.name;}).join(", ");
 		console.log("\n=====");
-		console.log("Getting page information for " + pages.length + " pages");
+		console.log("Getting page information for " + uniquePages.length + " pages");
 		// console.log(pageNames);
 		console.log("=====\n");
 
-		recurse(0, pageLength)
+		if(pageLength > 0){
+			recurse(0, pageLength)
+		}
+	
 		function recurse(currentPage, pageLength){
-			var page = pages[currentPage];
+			var page = uniquePages[currentPage];
 			// console.log("[feed] Getting page info for page: " + page.name)
 			graph.setOptions(options).get(page.name + "?" + fieldsQuery, function(err, res){
 				if(!err){
 					// console.log(res);
-					database.update("pages", {name: page.name},
+					database.update("pages", {name: uniquePages.name},
 					 {$set: {
 					 	about: res.about,
 					 	picture: res.picture.data.url,
@@ -115,16 +136,29 @@ function getPageInfo(){
 function fetch(feedConfig){
 	// try{
 		database.find("pages", {}, null, null, function(pages){
+			var uniquePages = []
+			pages.forEach((p) => {
+				var find = uniquePages.find((fp) => {
+					if(fp){
+						return fp['name'] == p['name']
+					}else{
+						return null
+					}
+				})
+				if(!find){
+					uniquePages.push(p)
+				}
+			})
 			// var pageNames = pages.map(function(p){return p.name;}).join(", ");
 			console.log("\n=====");
-			console.log("recursing through " + pages.length + "pages");
+			console.log("recursing through " + uniquePages.length + "pages");
 			// console.log(pageNames)
 			console.log("=====\n");
 
-			recurse(0, pages.length)
+			recurse(0, uniquePages.length)
 
 			function recurse(current_page, count_pages){
-				var thisPage = pages[current_page];
+				var thisPage = uniquePages[current_page];
 				running++;
 				getPage(thisPage.name, feedConfig, function(feedData){
 					var feedLength = feedData.length;

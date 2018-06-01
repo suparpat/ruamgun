@@ -3,7 +3,7 @@ var Datastore = require('nedb');
 var db = {};
 var pages = [];
 var cats = [];
-var config = require('./config.json');
+var config = require('./config');
 
 function start(cb){
 	var compactionInterval = 1000 * 60 * config.database.compaction_interval_minutes;

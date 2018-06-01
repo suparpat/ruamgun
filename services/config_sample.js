@@ -1,4 +1,4 @@
-{
+var options = {
 	"env": "development",
 	"facebook":{
 		"app_id": "123456",
@@ -6,8 +6,8 @@
 		"app_token": "your_token"
 	}
 	"cron":{
-		"development": "*/30 * * * * *",
-		"production": "*/5 * * * *"
+		"development": "*/30 * * * *",
+		"production": "*/15 * * * *"
 	},
 	"feeds":{
 		"mode": "latest",
@@ -25,3 +25,5 @@
 		"page_item_limit": 50
 	}
 }
+
+module.exports = options
