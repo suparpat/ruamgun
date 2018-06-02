@@ -159,6 +159,7 @@ function fetch(feedConfig){
 
 			function recurse(current_page, count_pages){
 				var thisPage = uniquePages[current_page];
+				console.log('getting page ' + thisPage.name)
 				running++;
 				getPage(thisPage.name, feedConfig, function(feedData){
 					var feedLength = feedData.length;
@@ -363,6 +364,7 @@ function get(params, pageCount, output, cb){
 
 	var url = params.url;
 
+	console.log('page: ' + pageCount)
 	if(pageCount == 1){
 		var query = "fields=" + fields.join(",");
 

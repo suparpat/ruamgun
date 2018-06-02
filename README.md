@@ -24,5 +24,6 @@ Edit array in scripts/addPages.js, then run:
 
 ## Terminating job
 
-Call 'ps ax' to list running processes
-kill {PID} to kill 
+`Call 'ps ax' to list running processes`
+
+`kill {PID} to kill `
