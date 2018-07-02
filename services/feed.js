@@ -4,7 +4,7 @@ var database = require('./database');
 var helpers = require('./helpers');
 var config = require('./config');
 
-var running = 0;
+var running = false;
 var options = {
 	    timeout:  10000
 	  , pool:     { maxSockets:  5 }
@@ -33,8 +33,9 @@ function start(){
 	}
 
 	function run() {
-		if(running == 0){
+		if(!running){
 			console.log("[feed] " + new Date() + ": getting feed data");
+			running = true;
 			fetch(config.feeds);
 		}else{
 			console.log("[feed] ALREADY RUNNING!!")
@@ -160,7 +161,8 @@ function fetch(feedConfig){
 			function recurse(current_page, count_pages){
 				var thisPage = uniquePages[current_page];
 				console.log('getting page ' + thisPage.name)
-				running++;
+				// running = true;
+
 				getPage(thisPage.name, feedConfig, function(feedData){
 					var feedLength = feedData.length;
 					// console.log("Done querying page " + thisPage.name, "length: " + feedLength);
@@ -201,18 +203,22 @@ function fetch(feedConfig){
 								database.compact(database.getPageCat(thisPage.name));
 							})
 						})
-						running--;
+						// running = false;
 						current_page = current_page + 1;
 						// console.log("CHECK RECURSING", current_page, count_pages, current_page < count_pages)
 						if(current_page < count_pages){
 							recurse(current_page, count_pages);
+						}else{
+							running = false
 						}
 					}else{
-						running--;
+						// running = false;
 						current_page = current_page + 1;
 						// console.log("LENGTH 0, CHECK RECURSING", current_page, count_pages)
 						if(current_page < count_pages){
 							recurse(current_page, count_pages);
+						}else{
+							running = false
 						}
 					}
 
@@ -376,7 +382,7 @@ function get(params, pageCount, output, cb){
 		}
 
 		var firstCallUrl = pageId + "/feed?" + query;
-		// console.log("[feed] Querying page " + pageId);
+		console.log("[feed] Querying page " + pageId);
 		graph.setOptions(options)
 			  .get(firstCallUrl, function(err, res) {
 			  	if(err){

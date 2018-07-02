@@ -8,7 +8,7 @@ database.start(function(){
 	feed.setup();
 	feed.start();
 
-	webServer.start(3000);
+	webServer.start(3010);
 
 });
 
